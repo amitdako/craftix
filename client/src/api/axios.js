@@ -1,8 +1,13 @@
 import axios from "axios";
 
-// Creating a base instance for our API
+/**
+ * Base URL configuration:
+ * In production (Vercel), it uses the environment variable VITE_API_URL.
+ * In development, it falls back to localhost:5000.
+ */
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // This points to your Node.js server
+  // כתובת ישירה ל-Render - בלי להסתמך על משתני סביבה לרגע
+  baseURL: "https://craftix-backend.onrender.com/api",
 });
 
 // Automatically add the JWT token to every request if it exists in local storage
