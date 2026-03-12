@@ -5,26 +5,18 @@ require("dotenv").config();
 const path = require("path");
 const app = express();
 
-// --- 1. תיקון ה-CORS שיהיה גמיש ---
-const allowedOrigins = [
-  "http://localhost:5173", // פיתוח מקומי
-  "https://craftix-green.vercel.app", // הכתובת הציבורית שלך ב-Vercel
-];
-
+// --- 1. תיקון ה-CORS (גרסה חסינה) ---
+// הגדרה זו מאפשרת לכל דומיין לגשת בזמן שאנחנו בבדיקות, ופותרת את בעיית ה-Preflight
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // מאפשר בקשות בלי origin (כמו Postman או סלולר) או כאלו שברשימה
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true, // מאפשר לכל Origin (כולל Vercel)
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
+// חשוב: express.json חייב לבוא אחרי ה-CORS ולפני ה-Routes
 app.use(express.json());
 
 // --- 2. תיקון הגישה לתמונות בשרת ---
@@ -33,7 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/craftix")
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((err) => console.error("Could not connect to MongoDB", err));
 
 // Routes
@@ -41,13 +33,12 @@ const postRoutes = require("./routes/posts");
 const userRoutes = require("./routes/users");
 
 // שימוש בנתבים עם קידומת /api
-// וודא שב-Vercel ה-VITE_API_URL מסתיים ב- /api
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 
-// Root test route - עוזר לבדוק שהשרת חי
+// Root test route - עוזר לוודא שהשרת ב-Render התעורר
 app.get("/", (req, res) => {
-  res.send("Craftix API is running...");
+  res.send("Craftix API is running smoothly on Render!");
 });
 
 const PORT = process.env.PORT || 5000;
