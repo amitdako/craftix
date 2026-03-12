@@ -5,42 +5,44 @@ require("dotenv").config();
 const path = require("path");
 const app = express();
 
-// --- 1. הגדרת CORS חסינה ---
 app.use(
   cors({
-    origin: true, // מאפשר ל-Vercel ולכל מקור אחר
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-// הוספת טיפול מפורש בבקשות OPTIONS (Preflight) לכל הנתיבים
-// זה מה שיפתור את ה-404 על ה-OPTIONS
-app.options("*", cors());
-
+app.options(/(.*)/, cors());
 app.use(express.json());
 
-// --- 2. גישה לתמונות ---
+//Access to media.
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// MongoDB Connection
+//MongoDB Connection ---
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/craftix";
+
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/craftix")
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch((err) => console.error("Could not connect to MongoDB", err));
+  .connect(mongoURI)
+  .then(() => {
+    const dbType = process.env.MONGO_URI ? "Atlas (Cloud)" : "Localhost";
+    console.log(`Connected to MongoDB ${dbType}`);
+  })
+  .catch((err) => {
+    console.error("Could not connect to MongoDB", err);
+    process.exit(1);
+  });
 
 // Routes
 const postRoutes = require("./routes/posts");
 const userRoutes = require("./routes/users");
 
-// שימוש בנתבים
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 
-// Root route
 app.get("/", (req, res) => {
-  res.send("Craftix API is running smoothly on Render!");
+  res.send("Craftix API is running smoothly!");
 });
 
 const PORT = process.env.PORT || 5000;
@@ -58,14 +60,11 @@ app.use((err, req, res, next) => {
   }
   if (err.code === 11000) {
     statusCode = 409;
-    message = "Email already exists. Please use a different one.";
+    message = "Email already exists.";
   }
 
   console.error(`[Error] ${statusCode} - ${message}`);
-  res.status(statusCode).json({
-    status: "error",
-    message: message,
-  });
+  res.status(statusCode).json({ status: "error", message });
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
