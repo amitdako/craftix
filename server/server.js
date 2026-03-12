@@ -5,21 +5,23 @@ require("dotenv").config();
 const path = require("path");
 const app = express();
 
-// --- 1. תיקון ה-CORS (גרסה חסינה) ---
-// הגדרה זו מאפשרת לכל דומיין לגשת בזמן שאנחנו בבדיקות, ופותרת את בעיית ה-Preflight
+// --- 1. הגדרת CORS חסינה ---
 app.use(
   cors({
-    origin: true, // מאפשר לכל Origin (כולל Vercel)
+    origin: true, // מאפשר ל-Vercel ולכל מקור אחר
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-// חשוב: express.json חייב לבוא אחרי ה-CORS ולפני ה-Routes
+// הוספת טיפול מפורש בבקשות OPTIONS (Preflight) לכל הנתיבים
+// זה מה שיפתור את ה-404 על ה-OPTIONS
+app.options("*", cors());
+
 app.use(express.json());
 
-// --- 2. תיקון הגישה לתמונות בשרת ---
+// --- 2. גישה לתמונות ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // MongoDB Connection
@@ -32,11 +34,11 @@ mongoose
 const postRoutes = require("./routes/posts");
 const userRoutes = require("./routes/users");
 
-// שימוש בנתבים עם קידומת /api
+// שימוש בנתבים
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 
-// Root test route - עוזר לוודא שהשרת ב-Render התעורר
+// Root route
 app.get("/", (req, res) => {
   res.send("Craftix API is running smoothly on Render!");
 });
