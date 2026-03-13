@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../../api/axios"; // שים לב ל-../ הכפול כי אנחנו בתוך תיקייה
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 import CommentSection from "../CommentSection/CommentSection";
 import * as S from "./PostCard.styles";
 
@@ -11,11 +11,16 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
   const [commentText, setCommentText] = useState("");
   const [allComments, setAllComments] = useState(post.comments || []);
 
+  const navigate = useNavigate();
+
   const postId = post?._id || post?.id;
   const currentUserId = currentUser?.id || currentUser?._id;
   const isLiked = likes.includes(currentUserId);
 
-  // --- Logic ---
+  // ניווט לפוסט המלא בלחיצה על הכרטיס
+  const handleCardClick = () => {
+    if (postId) navigate(`/post/${postId}`);
+  };
 
   const handleLike = async (e) => {
     e.preventDefault();
@@ -43,9 +48,8 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
     }
   };
 
-  const handleCommentLike = async (commentId, e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // תיקון: הסרת ה-e מהפרמטרים כדי לפשט את הקריאה מהתגובות
+  const handleLikeComment = async (commentId) => {
     try {
       const response = await api.post(
         `/posts/${postId}/comment/${commentId}/like`,
@@ -91,7 +95,10 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
     (post.author._id || post.author)?.toString() === currentUserId?.toString();
 
   return (
-    <div style={S.cardStyle}>
+    <div
+      style={{ ...S.cardStyle, cursor: "pointer" }}
+      onClick={handleCardClick}
+    >
       {/* Top Actions */}
       <div style={S.topActionsWrapper}>
         {post.category && (
@@ -107,7 +114,7 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
           ⋮
         </button>
         {showMenu && (
-          <div style={S.dropdownMenuStyle}>
+          <div style={S.dropdownMenuStyle} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={(e) => handleAction(onSave, e)}
               style={S.menuItemStyle}
@@ -131,10 +138,12 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
       </div>
 
       {/* Header */}
-      <Link
-        to={`/profile/${post.author?._id || post.author}`}
+      <div
         style={S.authorHeaderStyle}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate(`/profile/${post.author?._id || post.author}`);
+        }}
       >
         <div style={S.avatarStyle}>
           {post.author?.profileImage ? (
@@ -150,7 +159,7 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
         <span style={S.authorNameStyle}>
           {post.author?.displayName || post.author?.fullName || "User"}
         </span>
-      </Link>
+      </div>
 
       {/* Media */}
       {post.mediaUrl && (
@@ -172,30 +181,15 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
       )}
 
       {/* Content */}
-      {post.postType === "project" && post.title && (
-        <h3 style={{ margin: "0 0 10px 0" }}>{post.title}</h3>
-      )}
-      <p style={S.contentTextStyle}>{post.content}</p>
-
-      {/* Project Details */}
-      {post.postType === "project" && post.projectDetails && (
-        <div style={S.projectDetailsBoxStyle}>
-          <p style={S.detailItemStyle}>
-            <strong>🛠️ Tools:</strong>{" "}
-            {post.projectDetails.tools?.join(", ") || "None"}
-          </p>
-          <p style={S.detailItemStyle}>
-            <strong>📦 Materials:</strong>{" "}
-            {post.projectDetails.materials?.join(", ") || "None"}
-          </p>
-          <p style={S.detailItemStyle}>
-            <strong>⭐ Difficulty:</strong> {post.projectDetails.difficulty}/5
-          </p>
-        </div>
-      )}
+      <div style={{ padding: "0 15px 15px" }}>
+        {post.postType === "project" && post.title && (
+          <h3 style={{ margin: "10px 0" }}>{post.title}</h3>
+        )}
+        <p style={S.contentTextStyle}>{post.content}</p>
+      </div>
 
       {/* Footer */}
-      <div style={S.footerContainerStyle}>
+      <div style={S.footerContainerStyle} onClick={(e) => e.stopPropagation()}>
         <div style={S.leftFooterActions}>
           <button onClick={handleLike} style={S.likeButtonStyle}>
             <span
@@ -208,10 +202,7 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
             )}
           </button>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowComments(!showComments);
-            }}
+            onClick={() => setShowComments(!showComments)}
             style={S.commentToggleBtnStyle}
           >
             <span style={{ fontSize: "20px" }}>💬</span>
@@ -219,23 +210,11 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
           </button>
         </div>
         <div style={S.rightFooterActions}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onSave(postId);
-            }}
-            style={S.secondaryBtnStyle}
-          >
+          <button onClick={() => onSave(postId)} style={S.secondaryBtnStyle}>
             {isSaved ? "📂" : "💾"}
           </button>
           {isOwner && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(postId);
-              }}
-              style={S.deleteBtnStyle}
-            >
+            <button onClick={() => onDelete(postId)} style={S.deleteBtnStyle}>
               🗑️
             </button>
           )}
@@ -248,7 +227,7 @@ const PostCard = ({ post, currentUser, onDelete, onSave }) => {
           allComments={allComments}
           currentUserId={currentUserId}
           handleDeleteComment={handleDeleteComment}
-          handleCommentLike={handleCommentLike}
+          handleLikeComment={handleLikeComment}
           handleAddComment={handleAddComment}
           commentText={commentText}
           setCommentText={setCommentText}
