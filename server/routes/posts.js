@@ -70,6 +70,10 @@ router.get("/", async (req, res, next) => {
 
     const posts = await Post.find(query)
       .populate("author", "displayName profileImage")
+      .populate({
+        path: "comments.author",
+        select: "displayName profileImage",
+      })
       .sort({ createdAt: -1 })
       .lean();
 
