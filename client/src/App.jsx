@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import CreatePost from "./components/CreatePost/CreatePost";
 import SavedPosts from "./components/SavedPosts/SavedPosts";
 import Profile from "./components/Profile/Profile";
+import PostDetails from "./components/PostDetails/PostDetails"; // הייבוא החדש
 import Navbar from "./components/Navbar/Navbar";
 import logo from "./assets/logo.png";
 
@@ -90,6 +91,16 @@ function AppContent() {
           }
         />
 
+        {/* הנתיב החדש לצפייה בפוסט בודד - כולל ProtectedRoute להגנה */}
+        <Route
+          path="/post/:id"
+          element={
+            <ProtectedRoute>
+              <PostDetails currentUser={user} onUserUpdate={updateUser} />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/feed"
           element={<Feed currentUser={user} onUserUpdate={updateUser} />}
@@ -109,7 +120,7 @@ function AppContent() {
   );
 }
 
-// Styles
+// Styles - נשמרו בדיוק כפי שהיו
 const avatarStyle = {
   width: "35px",
   height: "35px",

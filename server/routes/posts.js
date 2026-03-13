@@ -5,19 +5,20 @@ const auth = require("../middleware/auth");
 const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
-//we will save in this folder with this name.
+
+// הגדרות אחסון לקבצים (Multer)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) =>
     cb(null, Date.now() + path.extname(file.originalname)),
 });
-// Wherw we will save the files and what are the limits.
+
 const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // מגבלה של 50MB
 });
 
-//creating new post
+// יצירת פוסט חדש (פרויקט או פוסט רגיל)
 router.post("/", auth, upload.single("media"), async (req, res, next) => {
   try {
     const postData = {
@@ -47,18 +48,16 @@ router.post("/", auth, upload.single("media"), async (req, res, next) => {
   }
 });
 
-// search by word/catagory.
+// שליפת כל הפוסטים (פיד ראשי) עם חיפוש ו-Double Populate
 router.get("/", async (req, res, next) => {
   try {
     const { category, search } = req.query;
     let query = {};
 
-    //searching by catagory.
     if (category && category !== "All") {
       query.category = category;
     }
 
-    // search by words.
     if (search && search.trim() !== "") {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -69,10 +68,17 @@ router.get("/", async (req, res, next) => {
     console.log("Final MongoDB Query:", JSON.stringify(query));
 
     const posts = await Post.find(query)
-      .populate("author", "displayName profileImage")
+      .populate("author", "displayName profileImage") // יוצר הפוסט הנוכחי
       .populate({
         path: "comments.author",
-        select: "displayName profileImage",
+        select: "displayName profileImage", // יוצרי התגובות
+      })
+      .populate({
+        path: "parentPost", // הפרויקט המקורי (במידה וזה שיתוף)
+        populate: {
+          path: "author",
+          select: "displayName profileImage", // יוצר הפרויקט המקורי - Populate כפול!
+        },
       })
       .sort({ createdAt: -1 })
       .lean();
@@ -80,14 +86,24 @@ router.get("/", async (req, res, next) => {
     console.log(`Found ${posts.length} posts.`);
     res.json(posts);
   } catch (err) {
+    console.error("Error in GET /posts:", err);
     next(err);
   }
 });
-// my profile
+
+// שליפת פוסטים של המשתמש המחובר (הפרופיל שלי)
 router.get("/my-posts", auth, async (req, res) => {
   try {
     const posts = await Post.find({ author: req.user.id })
       .populate("author", "displayName profileImage")
+      .populate({
+        path: "comments.author",
+        select: "displayName profileImage",
+      })
+      .populate({
+        path: "parentPost",
+        populate: { path: "author", select: "displayName profileImage" },
+      })
       .sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
@@ -95,7 +111,7 @@ router.get("/my-posts", auth, async (req, res) => {
   }
 });
 
-//Add a comment to a post
+// הוספת תגובה לפוסט
 router.post("/:id/comment", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -109,7 +125,6 @@ router.post("/:id/comment", auth, async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
-    // Populate author info before sending back
     const updatedPost = await Post.findById(post._id).populate(
       "comments.author",
       "displayName profileImage",
@@ -120,7 +135,7 @@ router.post("/:id/comment", auth, async (req, res) => {
   }
 });
 
-// Delete a comment
+// מחיקת תגובה
 router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
@@ -129,19 +144,15 @@ router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
     const comment = post.comments.id(req.params.commentId);
     if (!comment) return res.status(404).json({ message: "Comment not found" });
 
-    // --- Ownership Check ---
-    // Only the comment author can delete it
     if (comment.author.toString() !== req.user.id) {
       return res
         .status(401)
         .json({ message: "Not authorized to delete this comment" });
     }
 
-    // Remove the comment from the array
     post.comments.pull(req.params.commentId);
     await post.save();
 
-    // Return the updated comments list (populated)
     const updatedPost = await Post.findById(req.params.postId).populate(
       "comments.author",
       "displayName profileImage",
@@ -153,7 +164,7 @@ router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
   }
 });
 
-// Like/Unlike a specific comment
+// לייק/ביטול לייק לתגובה ספציפית
 router.post("/:postId/comment/:commentId/like", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
@@ -172,8 +183,6 @@ router.post("/:postId/comment/:commentId/like", auth, async (req, res) => {
 
     await post.save();
 
-    // --- התיקון הקריטי כאן ---
-    // אנחנו טוענים מחדש את הפוסט עם פרטי המשתמשים בתגובות לפני השליחה
     const updatedPost = await Post.findById(req.params.postId).populate(
       "comments.author",
       "displayName profileImage",
@@ -185,20 +194,18 @@ router.post("/:postId/comment/:commentId/like", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-// Like / Unlike a post
+
+// לייק/ביטול לייק לפוסט
 router.post("/like/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    // Check if the user already liked the post
     const isLiked = post.likes.includes(req.user.id);
 
     if (isLiked) {
-      // Unlike: Remove user ID from likes array
       post.likes = post.likes.filter((id) => id.toString() !== req.user.id);
     } else {
-      // Like: Add user ID to likes array
       post.likes.push(req.user.id);
     }
 
@@ -208,16 +215,42 @@ router.post("/like/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-// Get posts for a specific user with optional search
+//reciving specific post.
+router.get("/:id", async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate("author", "displayName profileImage") // היוצר של הפוסט הנוכחי
+      .populate({
+        path: "comments.author",
+        select: "displayName profileImage", // יוצרי התגובות
+      })
+      .populate({
+        path: "parentPost", // הפרויקט המקורי (במידה וזה שיתוף)
+        populate: {
+          path: "author",
+          select: "displayName profileImage", // יוצר הפרויקט המקורי
+        },
+      });
+
+    if (!post) {
+      return res.status(404).json({ message: "פוסט לא נמצא" });
+    }
+
+    res.json(post);
+  } catch (err) {
+    console.error("Error fetching single post:", err);
+    next(err);
+  }
+});
+
+// שליפת פוסטים של משתמש ספציפי (לפרופיל) עם חיפוש
 router.get("/user/:userId", async (req, res, next) => {
   try {
     const { search } = req.query;
     const userId = req.params.userId;
 
-    // Start with the basic filter: only posts from this user
     let query = { author: userId };
 
-    // If there's a search term, add the regex search logic
     if (search && search.trim() !== "") {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -231,6 +264,10 @@ router.get("/user/:userId", async (req, res, next) => {
         path: "comments.author",
         select: "displayName profileImage",
       })
+      .populate({
+        path: "parentPost",
+        populate: { path: "author", select: "displayName profileImage" },
+      })
       .sort({ createdAt: -1 });
 
     res.json(posts);
@@ -239,7 +276,7 @@ router.get("/user/:userId", async (req, res, next) => {
   }
 });
 
-//save or unsave post.
+// שמירה או ביטול שמירה של פוסט
 router.post("/save/:id", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -271,7 +308,52 @@ router.post("/save/:id", auth, async (req, res) => {
   }
 });
 
-//delete post
+// יצירת פוסט "ביצעתי את זה" (שיתוף פרויקט)
+router.post(
+  "/:id/share-made-this",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      console.log("Share request received for post:", req.params.id);
+
+      const originalPost = await Post.findById(req.params.id);
+      if (!originalPost) {
+        return res.status(404).json({ message: "Original project not found" });
+      }
+
+      const sharePost = new Post({
+        content: req.body.comment,
+        author: req.user.id,
+        postType: "implementation",
+        parentPost: req.params.id,
+        category: originalPost.category, // ירושה אוטומטית של הקטגוריה מהמקור
+      });
+
+      if (req.file) {
+        sharePost.mediaUrl = `/uploads/${req.file.filename}`;
+        sharePost.mediaType = "image";
+      }
+
+      const savedPost = await sharePost.save();
+      console.log("Successfully saved shared post!");
+
+      const populatedPost = await Post.findById(savedPost._id)
+        .populate("author", "displayName profileImage")
+        .populate({
+          path: "parentPost",
+          populate: { path: "author", select: "displayName profileImage" },
+        });
+
+      res.status(201).json(populatedPost);
+    } catch (err) {
+      console.error("ERROR IN SHARE-MADE-THIS:", err);
+      res.status(500).json({ message: "Server error", error: err.message });
+    }
+  },
+);
+
+// מחיקת פוסט
 router.delete("/:id", auth, async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);

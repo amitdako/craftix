@@ -1,257 +1,569 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import CommentSection from "../CommentSection/CommentSection";
 import { styles } from "./PostDetails.styles";
 
-const PostDetails = () => {
+const PostDetails = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // States לניהול אינטראקציות ותוכן
+  const [likes, setLikes] = useState([]);
+  const [allComments, setAllComments] = useState([]);
+  const [showComments, setShowComments] = useState(true);
+  const [commentText, setCommentText] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [shareComment, setShareComment] = useState("");
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
+        setLoading(true);
         const res = await api.get(`/posts/${id}`);
         setPost(res.data);
+        setLikes(res.data.likes || []);
+        setAllComments(res.data.comments || []);
       } catch (err) {
         console.error("Error fetching post details:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchPost();
+    if (id) fetchPost();
   }, [id]);
 
-  // פונקציית עזר לכתובות תמונה מהשרת
+  // פונקציית עזר לעיצוב תאריך ושעה בעברית
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleString("he-IL", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const getImageUrl = (path) => {
     if (!path) return "";
     return path.startsWith("http") ? path : `http://localhost:5000${path}`;
   };
 
-  // 1. מצב טעינה - מונע קריסה בזמן שהנתונים בדרך מהשרת
-  if (loading) {
+  const currentUserId = currentUser?.id || currentUser?._id;
+  const isLiked = likes.includes(currentUserId);
+  const isOwner =
+    currentUser &&
+    post?.author &&
+    (post.author._id || post.author) === currentUserId;
+
+  const isSaved = Array.isArray(currentUser?.savedPosts)
+    ? currentUser.savedPosts.some((savedItem) => {
+        const savedId =
+          typeof savedItem === "object" ? savedItem._id : savedItem;
+        return String(savedId) === String(post?._id);
+      })
+    : false;
+
+  // פונקציות פעולה
+  const handleLike = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post(`/posts/like/${post._id}`);
+      setLikes(response.data.likes || []);
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post(`/posts/save/${post._id}`);
+      if (onUserUpdate) {
+        onUserUpdate({ savedPosts: response.data.savedPosts });
+      }
+    } catch (err) {
+      console.error("Error saving post:", err);
+    }
+  };
+
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      const response = await api.post(`/posts/${post._id}/comment`, {
+        text: commentText,
+      });
+      setAllComments(response.data);
+      setCommentText("");
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
+
+  const handleLikeComment = async (commentId) => {
+    try {
+      const response = await api.post(
+        `/posts/${post._id}/comment/${commentId}/like`,
+      );
+      setAllComments(response.data);
+    } catch (err) {
+      console.error("Error liking comment:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (window.confirm("בטוח שברצונך למחוק את התגובה?")) {
+      try {
+        const response = await api.delete(
+          `/posts/${post._id}/comment/${commentId}`,
+        );
+        setAllComments(response.data);
+      } catch (err) {
+        console.error("Error deleting comment:", err);
+      }
+    }
+  };
+
+  if (loading)
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "50px",
-          fontSize: "1.2rem",
-          color: "#666",
-        }}
-      >
-        Loading Craftix project details... 🛠️
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        טוען נתונים מהשרת... 🛠️
       </div>
     );
-  }
-
-  // 2. מקרה של שגיאה או פוסט שלא נמצא
-  if (!post) {
+  if (!post)
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "50px",
-          fontSize: "1.2rem",
-          color: "#dc3545",
-        }}
-      >
-        Post not found. 😕
+      <div style={{ textAlign: "center", marginTop: "50px", color: "#dc3545" }}>
+        הפוסט לא נמצא. 😕
       </div>
     );
-  }
 
-  // בדיקה אם מדובר בפוסט שיתוף ביצוע
   const isImplementation = post.postType === "implementation";
 
   return (
-    <div style={styles.container}>
-      {/* 3. Header: פרטי כותב וקטגוריה (מסודר ב-Flexbox) */}
-      <div
+    <div
+      style={{
+        maxWidth: "700px",
+        margin: "0 auto",
+        padding: "20px",
+        direction: "rtl",
+      }}
+    >
+      <button
+        onClick={() => navigate(-1)}
         style={{
+          marginBottom: "20px",
+          background: "none",
+          border: "none",
+          color: "#007bff",
+          cursor: "pointer",
+          fontWeight: "bold",
           display: "flex",
           alignItems: "center",
-          gap: "15px",
-          marginBottom: "25px",
-          width: "100%",
+          gap: "5px",
         }}
       >
-        {/* תמונת פרופיל / Avatar */}
+        <span>→</span> חזרה לפיד
+      </button>
+
+      <div
+        style={{
+          backgroundColor: "#fff",
+          borderRadius: "15px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+          border: "1px solid #eee",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header פוסט */}
         <div
           style={{
-            width: "55px",
-            height: "55px",
-            borderRadius: "50%",
-            backgroundColor: "#007bff",
-            color: "white",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-            fontWeight: "bold",
-            border: "2px solid #eee",
-            flexShrink: 0,
+            gap: "12px",
+            padding: "15px",
           }}
         >
-          {post.author?.profileImage ? (
-            <img
-              src={getImageUrl(post.author.profileImage)}
-              alt="Avatar"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            <span>{post.author?.displayName?.[0] || "U"}</span>
+          <div
+            style={{
+              width: "45px",
+              height: "45px",
+              borderRadius: "50%",
+              backgroundColor: "#007bff",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              overflow: "hidden",
+            }}
+          >
+            {post.author?.profileImage ? (
+              <img
+                src={getImageUrl(post.author.profileImage)}
+                alt=""
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <span>{post.author?.displayName?.[0] || "U"}</span>
+            )}
+          </div>
+          <div style={{ flex: 1, textAlign: "right" }}>
+            <div style={{ fontWeight: "bold", fontSize: "1rem" }}>
+              {post.author?.displayName}
+            </div>
+            {/* הצגת תאריך ושעה בראש הפוסט */}
+            <div style={{ fontSize: "0.75rem", color: "#888" }}>
+              {formatDateTime(post.createdAt)}
+            </div>
+          </div>
+          {(post.category || post.parentPost?.category) && (
+            <span
+              style={{
+                fontSize: "0.75rem",
+                backgroundColor: "#e7f3ff",
+                color: "#1877f2",
+                padding: "4px 12px",
+                borderRadius: "20px",
+                fontWeight: "bold",
+              }}
+            >
+              {post.category || post.parentPost?.category}
+            </span>
           )}
         </div>
 
-        {/* שם ותאריך (שמאל) + קטגוריה (ימין) */}
+        {/* מדיה */}
+        {post.mediaUrl && (
+          <div
+            style={{
+              width: "100%",
+              maxHeight: "500px",
+              overflow: "hidden",
+              backgroundColor: "#f0f2f5",
+            }}
+          >
+            {post.mediaType === "video" ? (
+              <video
+                src={getImageUrl(post.mediaUrl)}
+                controls
+                style={{ width: "100%", display: "block" }}
+              />
+            ) : (
+              <img
+                src={getImageUrl(post.mediaUrl)}
+                alt=""
+                style={{ width: "100%", display: "block" }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* תוכן */}
+        <div style={{ padding: "20px", textAlign: "right" }}>
+          {post.title && (
+            <h2
+              style={{
+                fontSize: "1.4rem",
+                margin: "0 0 10px 0",
+                color: "#1c1e21",
+                fontWeight: "800",
+              }}
+            >
+              {post.title}
+            </h2>
+          )}
+          <p
+            style={{
+              fontSize: "1rem",
+              lineHeight: "1.5",
+              color: "#1c1e21",
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {post.content}
+          </p>
+        </div>
+
+        {/* תיבת שיתוף ביצוע (Facebook Style) */}
+        {isImplementation && post.parentPost && (
+          <div
+            style={{
+              margin: "0 20px 20px",
+              padding: "15px",
+              border: "1px solid #e0e0e0",
+              borderRadius: "12px",
+              backgroundColor: "#fcfcfc",
+              textAlign: "right",
+              cursor: "pointer",
+            }}
+            onClick={() =>
+              navigate(`/post/${post.parentPost._id || post.parentPost}`)
+            }
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginBottom: "12px",
+                justifyContent: "flex-start",
+                flexDirection: "row-reverse",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                  color: "#555",
+                }}
+              >
+                {post.parentPost.author?.displayName}
+              </span>
+              <div
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  backgroundColor: "#7b8a97",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontSize: "10px",
+                }}
+              >
+                {post.parentPost.author?.profileImage ? (
+                  <img
+                    src={getImageUrl(post.parentPost.author.profileImage)}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    alt=""
+                  />
+                ) : (
+                  post.parentPost.author?.displayName?.[0]
+                )}
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                flexDirection: "row-reverse",
+              }}
+            >
+              {post.parentPost.mediaUrl && (
+                <img
+                  src={getImageUrl(post.parentPost.mediaUrl)}
+                  style={{
+                    width: "100px",
+                    height: "70px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                  alt=""
+                />
+              )}
+              <div style={{ flex: 1 }}>
+                <h4
+                  style={{
+                    margin: "0 0 5px 0",
+                    fontSize: "0.95rem",
+                    color: "#333",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {post.parentPost.title}
+                </h4>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "0.8rem",
+                    color: "#666",
+                    display: "-webkit-box",
+                    WebkitLineClamp: "2",
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {post.parentPost.content}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer פעולות */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            flex: 1,
+            padding: "10px 15px",
+            borderTop: "1px solid #eee",
           }}
         >
-          <div>
-            <div
-              style={{ fontWeight: "bold", fontSize: "1.3rem", color: "#333" }}
-            >
-              {post.author?.displayName || "User"}
-            </div>
-            <div style={{ fontSize: "0.85rem", color: "#aaa" }}>
-              {new Date(post.createdAt).toLocaleDateString()}
-            </div>
-          </div>
-
-          {/* קטגוריה - Badge בצד ימין (מושך גם מ-parentPost אם זה שיתוף) */}
-          {(post.category || post.parentPost?.category) && (
-            <div
+          <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+            <button
+              onClick={handleLike}
               style={{
-                fontSize: "0.85rem",
-                backgroundColor: "#f0f2f5",
-                color: "#65676b",
-                padding: "6px 14px",
-                borderRadius: "20px",
-                fontWeight: "600",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
               }}
             >
-              {post.category || post.parentPost?.category}
-            </div>
-          )}
+              <span
+                style={{
+                  fontSize: "20px",
+                  color: isLiked ? "#ff4d4d" : "#ccc",
+                }}
+              >
+                {isLiked ? "❤️" : "🤍"}
+              </span>
+              <span style={{ fontSize: "0.9rem", color: "#65676b" }}>
+                {likes.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setShowComments(!showComments)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#65676b",
+                fontSize: "0.9rem",
+              }}
+            >
+              <span style={{ fontSize: "20px" }}>💬</span>
+              <span>{allComments.length}</span>
+            </button>
+
+            {!isImplementation && (
+              <button
+                onClick={() => setIsFormOpen(!isFormOpen)}
+                style={{
+                  backgroundColor: "#ff4757",
+                  color: "white",
+                  border: "none",
+                  padding: "6px 15px",
+                  borderRadius: "20px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  fontSize: "0.8rem",
+                }}
+              >
+                🛠️ I Made This!
+              </button>
+            )}
+          </div>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={handleSave}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "1.2rem",
+              }}
+            >
+              {isSaved ? "📂" : "💾"}
+            </button>
+            {isOwner && (
+              <button
+                onClick={() => alert("מחיקת פוסט")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "1.1rem",
+                  color: "#dc3545",
+                }}
+              >
+                🗑️
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* 4. כותרת הפרויקט (גודל מותאם לסוג הפוסט) */}
-      <h1
-        style={{
-          fontSize: isImplementation ? "1.8rem" : "2.8rem",
-          color: "#222",
-          marginTop: "0",
-          marginBottom: "20px",
-          lineHeight: "1.1",
-          fontWeight: "800",
-        }}
-      >
-        {isImplementation
-          ? `Review: ${post.parentPost?.title || "Build Completion"}`
-          : post.title}
-      </h1>
-
-      {/* 5. תמונה ראשית */}
-      {post.mediaUrl && (
-        <img
-          src={getImageUrl(post.mediaUrl)}
-          alt={post.title || "Post media"}
-          style={{
-            ...styles.image,
-            borderRadius: "15px",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-          }}
-        />
-      )}
-
-      {/* 6. פרטי פרויקט (כלים, מצרכים, קושי) - מוצג רק בפרויקטים */}
-      {!isImplementation && post.projectDetails && (
-        <div
-          style={{
-            backgroundColor: "#f4f7f6",
-            padding: "20px",
-            borderRadius: "12px",
-            margin: "25px 0",
-            borderLeft: "5px solid #ff4757",
-          }}
-        >
-          <h3 style={{ marginTop: 0, color: "#2d3436", fontSize: "1.2rem" }}>
-            Project Details
-          </h3>
-          <p style={{ margin: "8px 0", color: "#444" }}>
-            <strong>🛠️ Tools:</strong>{" "}
-            {post.projectDetails.tools?.join(", ") || "None"}
-          </p>
-          <p style={{ margin: "8px 0", color: "#444" }}>
-            <strong>📦 Materials:</strong>{" "}
-            {post.projectDetails.materials?.join(", ") || "None"}
-          </p>
-          <p style={{ margin: "8px 0", color: "#444" }}>
-            <strong>⭐ Difficulty:</strong> {post.projectDetails.difficulty}/5
-          </p>
-        </div>
-      )}
-
-      {/* 7. תוכן הפוסט (הוראות / תיאור הביצוע) */}
-      <div style={{ marginTop: "30px" }}>
-        <h3
-          style={{
-            color: "#2d3436",
-            fontSize: "1.5rem",
-            borderBottom: "2px solid #eee",
-            paddingBottom: "10px",
-          }}
-        >
-          {isImplementation ? "Build Notes" : "Instructions & Description"}
-        </h3>
-        <p
-          style={{
-            ...styles.description,
-            whiteSpace: "pre-wrap",
-            fontSize: "1.1rem",
-            lineHeight: "1.6",
-            color: "#333",
-          }}
-        >
-          {post.content}
-        </p>
-      </div>
-
-      {/* 8. Community Section - מוצג רק בדף של פרויקט מקורי */}
-      {!isImplementation && (
-        <div
-          style={{
-            ...styles.communitySection,
-            backgroundColor: "#fff",
-            border: "2px dashed #ddd",
-            borderRadius: "15px",
-            padding: "30px",
-            marginTop: "40px",
-            textAlign: "center",
-          }}
-        >
-          <h2 style={{ margin: "0 0 10px 0" }}>Community Showcase</h2>
-          <p style={{ color: "#666", marginBottom: "20px" }}>
-            Built this yourself? Show the community your version!
-          </p>
-          <button
-            onClick={() => alert("Opening build form...")}
+        {/* טופס I Made This מהיר */}
+        {isFormOpen && (
+          <div
             style={{
-              ...styles.madeThisButton,
-              padding: "12px 30px",
-              fontSize: "1.1rem",
+              padding: "15px",
+              backgroundColor: "#fff5f5",
+              borderTop: "1px solid #ffe3e3",
+              textAlign: "right",
             }}
-            onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-            onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
           >
-            🛠️ I Made This!
-          </button>
+            <h4
+              style={{
+                margin: "0 0 10px 0",
+                fontSize: "0.9rem",
+                color: "#ff4757",
+              }}
+            >
+              שתפו את הביצוע שלכם לפרויקט זה!
+            </h4>
+            <textarea
+              placeholder="איך יצא לכם לבנות את זה?"
+              value={shareComment}
+              onChange={(e) => setShareComment(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #ddd",
+                marginBottom: "10px",
+                minHeight: "60px",
+                outline: "none",
+              }}
+            />
+            <button
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              פרסם שיתוף
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* רכיב התגובות המלא */}
+      {showComments && (
+        <div style={{ marginTop: "20px" }}>
+          <CommentSection
+            allComments={allComments}
+            currentUserId={currentUserId}
+            handleDeleteComment={handleDeleteComment}
+            handleLikeComment={handleLikeComment}
+            handleAddComment={handleAddComment}
+            commentText={commentText}
+            setCommentText={setCommentText}
+          />
         </div>
       )}
     </div>

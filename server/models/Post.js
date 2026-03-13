@@ -18,6 +18,16 @@ const postSchema = new mongoose.Schema(
       default: "general",
     },
     title: { type: String, trim: true },
+    postType: {
+      type: String,
+      enum: ["project", "regular", "implementation"],
+      default: "regular",
+    },
+    parentPost: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+      default: null,
+    },
     category: { type: String, required: true, trim: true },
     content: { type: String, required: true },
     mediaUrl: { type: String }, // Path to file on server
