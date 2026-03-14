@@ -53,6 +53,15 @@ const CreatePost = () => {
     }
   };
 
+  //remove media from post before posting.
+  const handleRemoveMedia = () => {
+    setFormData({ ...formData, media: null });
+    if (previewUrl) URL.revokeObjectURL(previewUrl); //cleaning memory.
+    setPreviewUrl(null);
+    const fileInput = document.querySelector('input[type="file"]'); //resting input button.
+    if (fileInput) fileInput.value = "";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // don't refresh!
     setIsSubmitting(true);
@@ -94,12 +103,14 @@ const CreatePost = () => {
       {/* Select type */}
       <div style={S.typeSelectorStyle}>
         <button
+          type="button"
           onClick={() => setPostType("general")}
           style={S.typeButtonStyle(postType === "general")}
         >
           General
         </button>
         <button
+          type="button"
           onClick={() => setPostType("project")}
           style={S.typeButtonStyle(postType === "project")}
         >
@@ -183,9 +194,34 @@ const CreatePost = () => {
           onChange={handleFileChange}
         />
 
-        {/*IMAGE/VIDEO */}
+        {/*Image/video preview with remove button */}
         {previewUrl && (
-          <div style={S.previewContainerStyle}>
+          <div style={{ ...S.previewContainerStyle, position: "relative" }}>
+            <button
+              type="button"
+              onClick={handleRemoveMedia}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                zIndex: 10,
+                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: "28px",
+                height: "28px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+                fontSize: "18px",
+              }}
+              title="Remove media"
+            >
+              ×
+            </button>
             {formData.media?.type.startsWith("video") ? (
               <video src={previewUrl} style={S.previewMediaStyle} controls />
             ) : (
