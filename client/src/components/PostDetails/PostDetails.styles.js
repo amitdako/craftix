@@ -1,62 +1,56 @@
-// PostDetailsStyle.js
 export const styles = {
   container: {
-    maxWidth: "800px",
-    margin: "40px auto",
-    padding: "20px",
+    maxWidth: "600px", // הקטנה מ-800 ל-600 (כמו בפיד)
+    margin: "20px auto",
+    padding: "0px", // ביטול ה-padding הפנימי כדי שהמדיה תיצמד לקצוות כמו בכרטיס
     backgroundColor: "#fff",
-    borderRadius: "12px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+    borderRadius: "15px",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
     fontFamily: "Arial, sans-serif",
+    overflow: "hidden",
+    border: "1px solid #eee",
   },
   image: {
     width: "100%",
-    height: "400px",
+    maxHeight: "500px", // שינוי מ-400 קבוע ל-max כדי שלא ימתח תמונות קטנות
     objectFit: "cover",
-    borderRadius: "8px",
-    marginBottom: "20px",
+    display: "block",
   },
   header: {
-    borderBottom: "2px solid #f0f0f0",
-    paddingBottom: "15px",
-    marginBottom: "20px",
+    padding: "15px",
+    borderBottom: "1px solid #f0f2f5",
   },
   title: {
-    fontSize: "2.5rem",
-    color: "#333",
-    margin: 0,
+    fontSize: "1.25rem", // הקטנה מ-2.5 ל-1.25
+    color: "#1c1e21",
+    margin: "0 0 10px 0",
+    fontWeight: "800",
+    padding: "0 15px",
   },
   description: {
-    lineHeight: "1.6",
-    color: "#555",
-    fontSize: "1.1rem",
-    whiteSpace: "pre-wrap", // שומר על ירידות שורה מהטקסט המקורי
-  },
-  communitySection: {
-    marginTop: "40px",
-    paddingTop: "20px",
-    borderTop: "2px dashed #e0e0e0",
-    textAlign: "center",
+    lineHeight: "1.5",
+    color: "#444",
+    fontSize: "1rem",
+    whiteSpace: "pre-wrap",
+    padding: "0 15px 15px 15px",
   },
   madeThisButton: {
     backgroundColor: "#ff4757",
     color: "white",
     border: "none",
-    padding: "12px 24px",
-    fontSize: "1.1rem",
+    padding: "6px 15px",
+    fontSize: "0.85rem",
     fontWeight: "bold",
-    borderRadius: "50px",
+    borderRadius: "20px",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: "8px",
-    transition: "transform 0.2s",
-    marginTop: "15px",
+    gap: "5px",
   },
   loading: {
     textAlign: "center",
     marginTop: "100px",
-    fontSize: "1.2rem",
+    fontSize: "1.1rem",
     color: "#666",
   },
 };

@@ -6,8 +6,10 @@ import CommentSection from "../CommentSection/CommentSection";
 const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
   const [likes, setLikes] = useState(post.likes || []);
   const [showComments, setShowComments] = useState(false);
+  const [showMadeThisForm, setShowMadeThisForm] = useState(false);
   const [allComments, setAllComments] = useState(post.comments || []);
   const [commentText, setCommentText] = useState("");
+  const [madeThisText, setMadeThisText] = useState("");
   const navigate = useNavigate();
 
   const currentUserId = currentUser?.id || currentUser?._id;
@@ -17,7 +19,6 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
     post.author &&
     (post.author._id || post.author) === currentUserId;
 
-  // בדיקת שמירה - האם הפוסט נמצא ברשימת השמורים של המשתמש
   const isSaved = Array.isArray(currentUser?.savedPosts)
     ? currentUser.savedPosts.some((savedItem) => {
         const savedId =
@@ -26,7 +27,6 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
       })
     : false;
 
-  // פונקציה לעיצוב תאריך ושעה בעברית
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -45,7 +45,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
   };
 
   const handleLike = async (e) => {
-    e.stopPropagation(); // מונע מעבר לדף הפוסט כשלוחצים לייק
+    e.stopPropagation();
     try {
       const response = await api.post(`/posts/like/${post._id}`);
       setLikes(response.data.likes);
@@ -54,12 +54,44 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
     }
   };
 
-  // פונקציה חדשה: מעבר לדף הפוסט עם הוראה לפתוח את טופס השיתוף
   const handleMadeThisClick = (e) => {
     e.stopPropagation();
-    navigate(`/post/${post._id}`, { state: { openMadeThis: true } });
+    setShowMadeThisForm(!showMadeThisForm);
   };
 
+  // פונקציה מתוקנת עם עצירת הבעבוע (Propagation) וטיפול בשגיאות
+  const handleSubmitMadeThis = async (e) => {
+    if (e) e.stopPropagation();
+
+    if (!madeThisText.trim()) {
+      alert("נא לכתוב תוכן לפני הפרסום");
+      return;
+    }
+
+    try {
+      // אנחנו מוסיפים כאן שדות שסביר להניח שה-Backend שלך דורש
+      const response = await api.post("/posts", {
+        title: `ביצוע ל-${post.title || "פרויקט"}`, // הוספת כותרת אוטומטית
+        content: madeThisText,
+        postType: "implementation",
+        parentPost: post._id,
+        category: post.category || "General", // העברת הקטגוריה מהפוסט המקורי
+      });
+
+      console.log("פורסם בהצלחה:", response.data);
+      alert("הביצוע שלך פורסם בהצלחה!");
+      setMadeThisText("");
+      setShowMadeThisForm(false);
+
+      if (onUserUpdate) onUserUpdate();
+    } catch (err) {
+      // כאן התיקון הקריטי כדי שתראה *למה* השרת כועס
+      console.error("שגיאת שרת מפורטת:", err.response?.data);
+      const errorMessage =
+        err.response?.data?.message || "ודא שכל שדות החובה מלאים";
+      alert("שגיאה: " + errorMessage);
+    }
+  };
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -113,7 +145,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* Header - פרטי כותב ותאריך */}
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -150,6 +182,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
         <div style={{ flex: 1, textAlign: "right" }}>
           <Link
             to={`/profile/${post.author?._id || post.author}`}
+            onClick={(e) => e.stopPropagation()} // מונע ניווט כפול
             style={{
               textDecoration: "none",
               color: "#1c1e21",
@@ -181,7 +214,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
         )}
       </div>
 
-      {/* גוף הפוסט - לחיצה עוברת לדף הפוסט */}
+      {/* Post Body */}
       <div
         onClick={() => navigate(`/post/${post._id}`)}
         style={{ cursor: "pointer" }}
@@ -244,7 +277,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
         )}
       </div>
 
-      {/* תיבת שיתוף (Facebook Style) - במידה וזה שיתוף ביצוע */}
+      {/* תיבת שיתוף מקורי */}
       {isImplementation && post.parentPost && (
         <div
           style={{
@@ -276,30 +309,6 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
             >
               {post.parentPost.author?.displayName || "יוצר מקורי"}
             </span>
-            <div
-              style={{
-                width: "24px",
-                height: "24px",
-                borderRadius: "50%",
-                backgroundColor: "#7b8a97",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontSize: "10px",
-              }}
-            >
-              {post.parentPost.author?.profileImage ? (
-                <img
-                  src={getImageUrl(post.parentPost.author.profileImage)}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  alt=""
-                />
-              ) : (
-                post.parentPost.author?.displayName?.[0]
-              )}
-            </div>
           </div>
           <div
             style={{
@@ -330,25 +339,12 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
               >
                 {post.parentPost.title}
               </h4>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.8rem",
-                  color: "#666",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "2",
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {post.parentPost.content}
-              </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer Actions - לייק, תגובות, שמירה */}
+      {/* Footer Actions */}
       <div
         style={{
           display: "flex",
@@ -410,12 +406,11 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
             </span>
           </button>
 
-          {/* כפתור I Made This - משתמש בפונקציה המעבירה state */}
           {post.postType === "project" && (
             <button
               onClick={handleMadeThisClick}
               style={{
-                backgroundColor: "#ff4757",
+                backgroundColor: showMadeThisForm ? "#65676b" : "#ff4757",
                 color: "white",
                 border: "none",
                 padding: "5px 15px",
@@ -425,7 +420,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
                 fontSize: "0.8rem",
               }}
             >
-              🛠️ I Made This!
+              🛠️ {showMadeThisForm ? "סגור" : "I Made This!"}
             </button>
           )}
         </div>
@@ -465,6 +460,69 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
           )}
         </div>
       </div>
+
+      {/* --- אזור טופס "I Made This" המתוקן --- */}
+      {showMadeThisForm && (
+        <div
+          style={{
+            padding: "15px",
+            backgroundColor: "#fff5f6",
+            borderTop: "1px solid #ff4757",
+            textAlign: "right",
+          }}
+          onClick={(e) => e.stopPropagation()} // מונע מהלחיצה על הטופס להפעיל ניווט
+        >
+          <h4 style={{ margin: "0 0 10px 0", color: "#ff4757" }}>
+            שתפו את הביצוע שלכם לפרויקט הזה! ✨
+          </h4>
+          <textarea
+            value={madeThisText}
+            onChange={(e) => setMadeThisText(e.target.value)}
+            placeholder="איך היה? יש לכם טיפים לאחרים?"
+            style={{
+              width: "100%",
+              minHeight: "80px",
+              borderRadius: "10px",
+              padding: "10px",
+              border: "1px solid #ddd",
+              fontFamily: "inherit",
+              resize: "none",
+              marginBottom: "10px",
+            }}
+          />
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={(e) => handleSubmitMadeThis(e)} // שים לב להעברת ה-e כאן
+              style={{
+                backgroundColor: "#ff4757",
+                color: "white",
+                border: "none",
+                padding: "8px 20px",
+                borderRadius: "10px",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              פרסם עכשיו
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMadeThisForm(false);
+              }}
+              style={{
+                background: "none",
+                border: "1px solid #ccc",
+                padding: "8px 20px",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+            >
+              ביטול
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Comments Section */}
       {showComments && (
