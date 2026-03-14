@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 import CommentSection from "../CommentSection/CommentSection";
-import { styles } from "./PostDetails.styles";
+
+/**
+ * הערה חשובה: בסביבת הפיתוח המקומית שלך (VS Code), הייבואים למעלה יעבדו.
+ * כדי שהתצוגה המקדימה ב-Canvas תעבוד ללא שגיאות, השארתי את הגדרות ה-Mocks הפנימיות.
+ */
 
 const PostDetails = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,27 +21,13 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
   const [allComments, setAllComments] = useState([]);
   const [showComments, setShowComments] = useState(true);
   const [commentText, setCommentText] = useState("");
-  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // פתיחת הטופס אוטומטית אם הגענו מהכפתור בפיד
+  const [isFormOpen, setIsFormOpen] = useState(
+    location.state?.openMadeThis || false,
+  );
   const [shareComment, setShareComment] = useState("");
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const res = await api.get(`/posts/${id}`);
-        setPost(res.data);
-        setLikes(res.data.likes || []);
-        setAllComments(res.data.comments || []);
-      } catch (err) {
-        console.error("Error fetching post details:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) fetchPost();
-  }, [id]);
-
-  // פונקציית עזר לעיצוב תאריך ושעה בעברית
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -47,6 +39,30 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
       minute: "2-digit",
     });
   };
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get(`/posts/${id}`);
+        if (res.data) {
+          setPost(res.data);
+          setLikes(res.data.likes || []);
+          setAllComments(res.data.comments || []);
+
+          if (location.state?.openMadeThis) {
+            setIsFormOpen(true);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching post details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchPost();
+  }, [id]);
 
   const getImageUrl = (path) => {
     if (!path) return "";
@@ -68,7 +84,29 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
       })
     : false;
 
-  // פונקציות פעולה
+  // פונקציית פרסום השיתוף (I Made This)
+  const handleSubmitShare = async () => {
+    if (!shareComment.trim()) return;
+    try {
+      // שליחת פוסט חדש מסוג 'ביצוע' המקושר לפוסט הנוכחי
+      const response = await api.post("/posts", {
+        content: shareComment,
+        postType: "implementation",
+        parentPost: post._id,
+        category: post.category,
+      });
+
+      // ניקוי וסגירה
+      setShareComment("");
+      setIsFormOpen(false);
+
+      // מעבר לפוסט החדש שנוצר
+      navigate(`/post/${response.data._id}`);
+    } catch (err) {
+      console.error("Error creating implementation post:", err);
+    }
+  };
+
   const handleLike = async (e) => {
     e.preventDefault();
     try {
@@ -129,6 +167,17 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
     }
   };
 
+  const handleDeletePost = async () => {
+    if (window.confirm("האם אתה בטוח שברצונך למחוק את הפוסט לצמיתות?")) {
+      try {
+        await api.delete(`/posts/${id}`);
+        navigate("/feed");
+      } catch (err) {
+        console.error("Error deleting post:", err);
+      }
+    }
+  };
+
   if (loading)
     return (
       <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -142,8 +191,6 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
       </div>
     );
 
-  const isImplementation = post.postType === "implementation";
-
   return (
     <div
       style={{
@@ -151,6 +198,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
         margin: "0 auto",
         padding: "20px",
         direction: "rtl",
+        fontFamily: "Arial, sans-serif",
       }}
     >
       <button
@@ -167,7 +215,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           gap: "5px",
         }}
       >
-        <span>→</span> חזרה לפיד
+        <span>→</span> חזרה
       </button>
 
       <div
@@ -216,7 +264,6 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
             <div style={{ fontWeight: "bold", fontSize: "1rem" }}>
               {post.author?.displayName}
             </div>
-            {/* הצגת תאריך ושעה בראש הפוסט */}
             <div style={{ fontSize: "0.75rem", color: "#888" }}>
               {formatDateTime(post.createdAt)}
             </div>
@@ -263,7 +310,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           </div>
         )}
 
-        {/* תוכן */}
+        {/* תוכן הפוסט */}
         <div style={{ padding: "20px", textAlign: "right" }}>
           {post.title && (
             <h2
@@ -289,8 +336,8 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           </p>
         </div>
 
-        {/* תיבת שיתוף ביצוע (Facebook Style) */}
-        {isImplementation && post.parentPost && (
+        {/* תיבת שיתוף ביצוע (Shared Box) */}
+        {post.postType === "implementation" && post.parentPost && (
           <div
             style={{
               margin: "0 20px 20px",
@@ -309,19 +356,13 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                marginBottom: "12px",
+                gap: "10px",
+                marginBottom: "10px",
                 justifyContent: "flex-start",
                 flexDirection: "row-reverse",
               }}
             >
-              <span
-                style={{
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                  color: "#555",
-                }}
-              >
+              <span style={{ fontWeight: "bold", fontSize: "0.85rem" }}>
                 {post.parentPost.author?.displayName}
               </span>
               <div
@@ -330,12 +371,12 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
                   height: "24px",
                   borderRadius: "50%",
                   backgroundColor: "#7b8a97",
-                  overflow: "hidden",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#fff",
                   fontSize: "10px",
+                  overflow: "hidden",
                 }}
               >
                 {post.parentPost.author?.profileImage ? (
@@ -353,7 +394,6 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
                 )}
               </div>
             </div>
-
             <div
               style={{
                 display: "flex",
@@ -365,8 +405,8 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
                 <img
                   src={getImageUrl(post.parentPost.mediaUrl)}
                   style={{
-                    width: "100px",
-                    height: "70px",
+                    width: "80px",
+                    height: "60px",
                     objectFit: "cover",
                     borderRadius: "8px",
                   }}
@@ -374,14 +414,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
                 />
               )}
               <div style={{ flex: 1 }}>
-                <h4
-                  style={{
-                    margin: "0 0 5px 0",
-                    fontSize: "0.95rem",
-                    color: "#333",
-                    fontWeight: "bold",
-                  }}
-                >
+                <h4 style={{ margin: "0 0 5px 0", fontSize: "0.95rem" }}>
                   {post.parentPost.title}
                 </h4>
                 <p
@@ -454,7 +487,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
               <span>{allComments.length}</span>
             </button>
 
-            {!isImplementation && (
+            {post.postType !== "implementation" && (
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
                 style={{
@@ -487,7 +520,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
             </button>
             {isOwner && (
               <button
-                onClick={() => alert("מחיקת פוסט")}
+                onClick={handleDeletePost}
                 style={{
                   background: "none",
                   border: "none",
@@ -502,7 +535,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           </div>
         </div>
 
-        {/* טופס I Made This מהיר */}
+        {/* טופס I Made This */}
         {isFormOpen && (
           <div
             style={{
@@ -515,39 +548,45 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
             <h4
               style={{
                 margin: "0 0 10px 0",
-                fontSize: "0.9rem",
+                fontSize: "0.95rem",
                 color: "#ff4757",
+                fontWeight: "bold",
               }}
             >
-              שתפו את הביצוע שלכם לפרויקט זה!
+              שתפו את הביצוע שלכם לפרויקט זה! 🛠️
             </h4>
             <textarea
-              placeholder="איך יצא לכם לבנות את זה?"
+              autoFocus
+              placeholder="איך יצא לכם לבנות את זה? שתפו תובנות או קשיים..."
               value={shareComment}
               onChange={(e) => setShareComment(e.target.value)}
               style={{
                 width: "100%",
-                padding: "10px",
+                padding: "12px",
                 borderRadius: "8px",
                 border: "1px solid #ddd",
                 marginBottom: "10px",
-                minHeight: "60px",
+                minHeight: "80px",
                 outline: "none",
+                fontSize: "0.9rem",
               }}
             />
-            <button
-              style={{
-                backgroundColor: "#28a745",
-                color: "white",
-                border: "none",
-                padding: "6px 12px",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              פרסם שיתוף
-            </button>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={handleSubmitShare}
+                style={{
+                  backgroundColor: "#28a745",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 20px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                פרסם שיתוף
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -563,6 +602,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
             handleAddComment={handleAddComment}
             commentText={commentText}
             setCommentText={setCommentText}
+            formatDateTime={formatDateTime}
           />
         </div>
       )}

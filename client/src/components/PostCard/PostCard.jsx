@@ -54,6 +54,12 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
     }
   };
 
+  // פונקציה חדשה: מעבר לדף הפוסט עם הוראה לפתוח את טופס השיתוף
+  const handleMadeThisClick = (e) => {
+    e.stopPropagation();
+    navigate(`/post/${post._id}`, { state: { openMadeThis: true } });
+  };
+
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -250,9 +256,10 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
             textAlign: "right",
             cursor: "pointer",
           }}
-          onClick={() =>
-            navigate(`/post/${post.parentPost._id || post.parentPost}`)
-          }
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/post/${post.parentPost._id || post.parentPost}`);
+          }}
         >
           <div
             style={{
@@ -377,7 +384,10 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
           </button>
 
           <button
-            onClick={() => setShowComments(!showComments)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowComments(!showComments);
+            }}
             style={{
               background: "none",
               border: "none",
@@ -400,10 +410,10 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
             </span>
           </button>
 
-          {/* כפתור I Made This - רק בפוסטים מסוג פרויקט */}
+          {/* כפתור I Made This - משתמש בפונקציה המעבירה state */}
           {post.postType === "project" && (
             <button
-              onClick={() => navigate(`/post/${post._id}`)}
+              onClick={handleMadeThisClick}
               style={{
                 backgroundColor: "#ff4757",
                 color: "white",
@@ -464,6 +474,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete, onUserUpdate }) => {
             backgroundColor: "#fcfcfc",
             borderTop: "1px solid #f0f2f5",
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           <CommentSection
             allComments={allComments}
