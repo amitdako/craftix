@@ -6,7 +6,7 @@ import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostImplementationBox from "./PostImplementationBox";
 import PostFooterActions from "./PostFooterActions";
-import ImplementationForm from "../../ImplementationForm/ImplementationForm";
+import ImplementationForm from "../ImplementationForm/ImplementationForm";
 import CommentSection from "../CommentSection/CommentSection";
 import Swal from "sweetalert2";
 

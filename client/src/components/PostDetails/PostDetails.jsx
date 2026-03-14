@@ -5,7 +5,7 @@ import CommentSection from "../CommentSection/CommentSection";
 import * as S from "./PostDetails.styles";
 import PostHeader from "./PostHeader";
 import SharedBox from "./SharedBox";
-import ImplementationForm from "../../ImplementationForm/ImplementationForm";
+import ImplementationForm from "../ImplementationForm/ImplementationForm";
 
 const PostDetails = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
