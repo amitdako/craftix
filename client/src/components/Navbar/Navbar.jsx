@@ -5,7 +5,7 @@ import * as S from "./Navbar.styles";
 const Navbar = ({ user, handleLogout, logo }) => {
   const [navSearch, setNavSearch] = useState("");
   const navigate = useNavigate();
-
+  //Checking if there is input in the search.
   const handleInputChange = (e) => {
     const value = e.target.value;
     setNavSearch(value);
@@ -65,9 +65,9 @@ const Navbar = ({ user, handleLogout, logo }) => {
         </form>
       )}
 
-      {/* Right: Navigation */}
+      {/* Right : Navigation */}
       <div style={S.rightLinksWrapper}>
-        {user ? (
+        {user ? ( //if there is a user connectd.
           <>
             <Link to="/feed" style={S.linkStyle}>
               Feed
@@ -83,6 +83,7 @@ const Navbar = ({ user, handleLogout, logo }) => {
             </Link>
           </>
         ) : (
+          //if there is not user connected.
           <>
             <Link to="/login" style={S.linkStyle}>
               Login

@@ -26,7 +26,7 @@ const Login = ({ setUser }) => {
       const response = await api.post("/users/login", formData);
       const { token, user } = response.data;
 
-      // Persistence
+      // updating this information in the system.
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 

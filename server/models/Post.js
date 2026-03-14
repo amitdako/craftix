@@ -14,15 +14,10 @@ const postSchema = new mongoose.Schema(
     },
     postType: {
       type: String,
-      enum: ["general", "project"],
+      enum: ["general", "project", "implementation"],
       default: "general",
     },
     title: { type: String, trim: true },
-    postType: {
-      type: String,
-      enum: ["project", "regular", "implementation"],
-      default: "regular",
-    },
     parentPost: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",

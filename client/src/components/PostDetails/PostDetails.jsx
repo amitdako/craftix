@@ -3,11 +3,9 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 import CommentSection from "../CommentSection/CommentSection";
 import * as S from "./PostDetails.styles";
-
-// ייבוא רכיבי המשנה
 import PostHeader from "./PostHeader";
 import SharedBox from "./SharedBox";
-import ImplementationForm from "./ImplementationForm";
+import ImplementationForm from "../../ImplementationForm/ImplementationForm";
 
 const PostDetails = ({ currentUser, onUserUpdate }) => {
   const { id } = useParams();
@@ -18,14 +16,13 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [likes, setLikes] = useState([]);
   const [allComments, setAllComments] = useState([]);
-
-  // תיקון 1: התגובות סגורות כברירת מחדל
   const [showComments, setShowComments] = useState(false);
-
   const [isFormOpen, setIsFormOpen] = useState(
     location.state?.openMadeThis || false,
   );
   const [shareComment, setShareComment] = useState("");
+  const [madeThisMedia, setMadeThisMedia] = useState(null);
+  const [madeThisPreview, setMadeThisPreview] = useState(null);
 
   const formatDateTime = (ds) =>
     ds
@@ -37,6 +34,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           minute: "2-digit",
         })
       : "";
+
   const getImageUrl = (path) =>
     path?.startsWith("http") ? path : `http://localhost:5000${path}`;
 
@@ -59,41 +57,62 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
     if (id) fetchPost();
   }, [id]);
 
+  //changing file.
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMadeThisMedia(file);
+      setMadeThisPreview(URL.createObjectURL(file));
+    }
+  };
+  //canceling the form
+  const handleCancelForm = () => {
+    setIsFormOpen(false);
+    setShareComment("");
+    setMadeThisMedia(null);
+    setMadeThisPreview(null);
+  };
+  // doing like
   const handleLike = async (e) => {
     e.preventDefault();
     const res = await api.post(`/posts/like/${post._id}`);
     setLikes(res.data.likes || []);
   };
-
+  //saving post
   const handleSave = async (e) => {
     e.preventDefault();
     const res = await api.post(`/posts/save/${post._id}`);
     if (onUserUpdate) onUserUpdate({ savedPosts: res.data.savedPosts });
   };
-
+  //sharing post.
   const handleSubmitShare = async () => {
     if (!shareComment.trim()) return;
     try {
-      await api.post("/posts", {
-        content: shareComment,
-        postType: "implementation",
-        parentPost: post._id,
-        category: post.category,
+      const data = new FormData();
+      data.append("content", shareComment);
+      data.append("postType", "implementation");
+      data.append("parentPost", post._id);
+      data.append("category", post.category || "General");
+
+      if (madeThisMedia) {
+        data.append("media", madeThisMedia);
+      }
+
+      await api.post("/posts", data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setShareComment("");
-      setIsFormOpen(false);
+      handleCancelForm();
+      navigate("/feed");
     } catch (err) {
       console.error("Error creating implementation:", err);
     }
   };
 
-  if (loading) return <div style={S.styles.loading}>טוען... 🛠️</div>;
+  if (loading) return <div style={S.loading}>loading... 🛠️</div>;
   if (!post)
     return (
-      <div style={{ ...S.styles.loading, color: "#dc3545" }}>
-        הפוסט לא נמצא.
-      </div>
+      <div style={{ ...S.loading, color: "#dc3545" }}>Post didn't found.</div>
     );
 
   const currentUserId = currentUser?.id || currentUser?._id;
@@ -114,10 +133,10 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           gap: "5px",
         }}
       >
-        <span>→</span> חזרה
+        <span>→</span> back
       </button>
 
-      <div style={S.styles.container}>
+      <div style={S.container}>
         <PostHeader
           author={post.author}
           createdAt={post.createdAt}
@@ -135,22 +154,17 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
               backgroundColor: "#f0f2f5",
             }}
           >
-            <img
-              src={getImageUrl(post.mediaUrl)}
-              style={S.styles.image}
-              alt=""
-            />
+            <img src={getImageUrl(post.mediaUrl)} style={S.image} alt="" />
           </div>
         )}
 
         <div style={{ paddingTop: "15px" }}>
-          {post.title && <h2 style={S.styles.title}>{post.title}</h2>}
-          <p style={S.styles.description}>{post.content}</p>
+          {post.title && <h2 style={S.title}>{post.title}</h2>}
+          <p style={S.description}>{post.content}</p>
         </div>
 
         <SharedBox parentPost={post.parentPost} getImageUrl={getImageUrl} />
 
-        {/* Actions Footer */}
         <div
           style={{
             display: "flex",
@@ -215,9 +229,18 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
             {post.postType !== "implementation" && (
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                style={S.styles.madeThisButton}
+                style={{
+                  backgroundColor: isFormOpen ? "#65676b" : "#ff4757",
+                  color: "white",
+                  border: "none",
+                  padding: "5px 15px",
+                  borderRadius: "20px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  fontSize: "0.8rem",
+                }}
               >
-                🛠️ I Made This!
+                🛠️ {isFormOpen ? "Close" : "I Made This!"}
               </button>
             )}
           </div>
@@ -238,9 +261,14 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
 
         <ImplementationForm
           isOpen={isFormOpen}
+          currentUser={currentUser}
           value={shareComment}
           onChange={setShareComment}
           onSubmit={handleSubmitShare}
+          onCancel={handleCancelForm}
+          getImageUrl={getImageUrl}
+          onFileChange={handleFileChange}
+          previewUrl={madeThisPreview}
         />
       </div>
 

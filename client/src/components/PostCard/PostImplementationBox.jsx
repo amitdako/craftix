@@ -1,5 +1,6 @@
 const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
   if (!parentPost) return null;
+
   return (
     <div
       style={{
@@ -13,31 +14,73 @@ const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
       }}
       onClick={onNavigate}
     >
+      {/* Header in left*/}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          marginBottom: "8px",
+          marginBottom: "12px",
           justifyContent: "flex-start",
-          flexDirection: "row-reverse",
+          direction: "ltr",
         }}
       >
+        {/* picture of the original user.*/}
+        <div
+          style={{
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%",
+            backgroundColor: "#007bff",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "bold",
+            fontSize: "0.75rem",
+            overflow: "hidden",
+            border: "1px solid #eee",
+            flexShrink: 0,
+          }}
+        >
+          {parentPost.author?.profileImage ? (
+            <img
+              src={getImageUrl(parentPost.author.profileImage)}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            parentPost.author?.displayName?.[0] || "U"
+          )}
+        </div>
+
         <span
-          style={{ fontSize: "0.85rem", fontWeight: "bold", color: "#555" }}
+          style={{
+            fontSize: "0.85rem",
+            fontWeight: "bold",
+            color: "#555",
+            direction: "rtl",
+          }}
         >
           {parentPost.author?.displayName || "יוצר מקורי"}
         </span>
       </div>
+
+      {/* picture and title of the project*/}
       <div
-        style={{ display: "flex", gap: "10px", flexDirection: "row-reverse" }}
+        style={{
+          display: "flex",
+          gap: "10px",
+          flexDirection: "row-reverse",
+          alignItems: "center",
+        }}
       >
         {parentPost.mediaUrl && (
           <img
             src={getImageUrl(parentPost.mediaUrl)}
             style={{
-              width: "80px",
-              height: "60px",
+              width: "70px",
+              height: "50px",
               objectFit: "cover",
               borderRadius: "6px",
             }}
@@ -46,7 +89,12 @@ const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
         )}
         <div style={{ flex: 1 }}>
           <h4
-            style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "#333" }}
+            style={{
+              margin: "0",
+              fontSize: "0.9rem",
+              color: "#333",
+              fontWeight: "600",
+            }}
           >
             {parentPost.title}
           </h4>
@@ -55,4 +103,5 @@ const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
     </div>
   );
 };
+
 export default PostImplementationBox;

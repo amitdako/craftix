@@ -10,7 +10,7 @@ const PostHeader = ({
   formatDateTime,
 }) => (
   <div style={s.headerWrapper}>
-    {/* צד שמאל: קבוצת הפרופיל */}
+    {/* left:profile*/}
     <div style={s.authorInfoGroup}>
       <div style={s.avatarStyle}>
         {author?.profileImage ? (
@@ -24,7 +24,7 @@ const PostHeader = ({
         )}
       </div>
 
-      {/* השם והתאריך אחד מעל השני */}
+      {/* name above the date.*/}
       <div style={s.textStack}>
         <Link
           to={`/profile/${author?._id || author}`}
@@ -37,7 +37,7 @@ const PostHeader = ({
       </div>
     </div>
 
-    {/* צד ימין: הקטגוריה */}
+    {/* right:catagory*/}
     {category && <span style={s.categoryBadgeStyle}>{category}</span>}
   </div>
 );

@@ -2,20 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import * as S from "./CreatePost.styles";
+import Taginput from "../Taginput/Taginput";
 
 const CreatePost = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [postType, setPostType] = useState("general");
-  const [previewUrl, setPreviewUrl] = useState(null); // State לתצוגה מקדימה
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     category: "Cooking",
-    tools: "",
-    materials: "",
+    tools: [],
+    materials: [],
     difficulty: 1,
     media: null,
   });
@@ -30,7 +31,7 @@ const CreatePost = () => {
     "Other",
   ];
 
-  // ניקוי ה-URL הזמני כדי למנוע Memory Leaks
+  //Deleting irelevnt date when we finish to use it.
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -46,14 +47,14 @@ const CreatePost = () => {
     const file = e.target.files[0];
     if (file) {
       setFormData({ ...formData, media: file });
-      // יצירת URL זמני לתצוגה מקדימה
+      // url for showing the file.
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // don't refresh!
     setIsSubmitting(true);
     setError("");
 
@@ -68,19 +69,15 @@ const CreatePost = () => {
       data.append("title", formData.title);
       const details = {
         difficulty: formData.difficulty,
-        tools: formData.tools
-          ? formData.tools.split(",").map((t) => t.trim())
-          : [],
-        materials: formData.materials
-          ? formData.materials.split(",").map((m) => m.trim())
-          : [],
+        tools: formData.tools,
+        materials: formData.materials,
       };
       data.append("projectDetails", JSON.stringify(details));
     }
-
+    //Saving the post information in the database.
     try {
       await api.post("/posts", data, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data" }, //format of sending information.
       });
       navigate("/feed");
     } catch (err) {
@@ -92,9 +89,9 @@ const CreatePost = () => {
 
   return (
     <div style={S.containerStyle}>
-      <h2 style={S.titleStyle}>Share on Craftix</h2>
+      <h2 style={S.titleStyle}>New post</h2>
 
-      {/* Type Selector */}
+      {/* Select type */}
       <div style={S.typeSelectorStyle}>
         <button
           onClick={() => setPostType("general")}
@@ -117,7 +114,7 @@ const CreatePost = () => {
             <input
               type="text"
               name="title"
-              placeholder="What did you build?"
+              placeholder="What is your product?"
               style={S.inputStyle}
               onChange={handleChange}
               required
@@ -136,19 +133,21 @@ const CreatePost = () => {
 
         {postType === "project" && (
           <>
-            <label style={S.labelStyle}>Tools (Comma separated)</label>
-            <textarea
-              name="tools"
-              placeholder="Hammer, Drill, Saw..."
-              style={S.inputStyle}
-              onChange={handleChange}
+            <label style={S.labelStyle}>Tools</label>
+            <Taginput
+              tags={formData.tools}
+              setTags={(newTags) =>
+                setFormData({ ...formData, tools: newTags })
+              }
+              placeholder="Press Enter to add tools (Hammer, Drill...)"
             />
-            <label style={S.labelStyle}>Materials (Comma separated)</label>
-            <textarea
-              name="materials"
-              placeholder="Wood glue, Screws..."
-              style={S.inputStyle}
-              onChange={handleChange}
+            <label style={S.labelStyle}>Materials</label>
+            <Taginput
+              tags={formData.materials}
+              setTags={(newTags) =>
+                setFormData({ ...formData, materials: newTags })
+              }
+              placeholder="Press Enter to add materials (Wood, Screws...)"
             />
             <label style={S.labelStyle}>Difficulty (1-5)</label>
             <select
@@ -184,7 +183,7 @@ const CreatePost = () => {
           onChange={handleFileChange}
         />
 
-        {/* --- IMAGE/VIDEO PREVIEW AREA --- */}
+        {/*IMAGE/VIDEO */}
         {previewUrl && (
           <div style={S.previewContainerStyle}>
             {formData.media?.type.startsWith("video") ? (

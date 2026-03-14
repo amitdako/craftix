@@ -1,4 +1,5 @@
 import * as s from "./PostCard.styles";
+//reciving the data from postcard.
 const PostContent = ({
   title,
   content,
@@ -8,12 +9,6 @@ const PostContent = ({
   onNavigate,
 }) => (
   <div onClick={onNavigate} style={{ cursor: "pointer" }}>
-    <div style={{ padding: "0 15px 15px 15px", textAlign: "right" }}>
-      {title && (
-        <h3 style={{ margin: "0 0 10px 0", fontSize: "1.2rem" }}>{title}</h3>
-      )}
-      <p style={s.contentTextStyle}>{content}</p>
-    </div>
     {mediaUrl && (
       <div style={s.mediaWrapperStyle}>
         {mediaType === "video" ? (
@@ -28,6 +23,12 @@ const PostContent = ({
         )}
       </div>
     )}
+    <div style={{ padding: "0 15px 15px 15px", textAlign: "right" }}>
+      {title && (
+        <h3 style={{ margin: "0 0 10px 0", fontSize: "1.2rem" }}>{title}</h3>
+      )}
+      <p style={s.contentTextStyle}>{content}</p>
+    </div>
   </div>
 );
 export default PostContent;

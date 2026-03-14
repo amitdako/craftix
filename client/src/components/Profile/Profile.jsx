@@ -3,23 +3,24 @@ import { Link, useParams } from "react-router-dom";
 import api from "../../api/axios";
 import PostCard from "../PostCard/PostCard";
 import * as S from "./Profile.styles";
+import Swal from "sweetalert2";
 
 const Profile = ({ currentUser, onUpdateUser }) => {
-  const { id } = useParams();
+  const { id } = useParams(); //taking the id from the url.
   const [profileUser, setProfileUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
   const [profileSearch, setProfileSearch] = useState("");
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null); //make direct contact to Dom element.
 
   const targetId = id || currentUser?.id;
   const isMyProfile = !id || id === currentUser?.id;
 
-  // 1. Fetch User Profile Info
+  //Fetch User Profile Info
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!targetId) return;
+      if (!targetId) return; //if there is no user.
       try {
         setLoading(true);
         const userRes = await api.get(`/users/${targetId}`);
@@ -33,7 +34,7 @@ const Profile = ({ currentUser, onUpdateUser }) => {
     fetchUserInfo();
   }, [targetId]);
 
-  // 2. Fetch User Posts with Debounce Search
+  // Fetch User Posts with Debounce Search
   useEffect(() => {
     const fetchProfilePosts = async () => {
       if (!targetId) return;
@@ -56,7 +57,7 @@ const Profile = ({ currentUser, onUpdateUser }) => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [targetId, profileSearch]);
-
+  //changing profile picture
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -74,23 +75,34 @@ const Profile = ({ currentUser, onUpdateUser }) => {
         ...prev,
         profileImage: response.data.profileImage,
       }));
-      alert("Profile picture updated!");
     } catch (err) {
       alert("Failed to upload image.");
     }
   };
-
+  //deleting post.
   const handleDelete = async (postId) => {
-    if (window.confirm("Are you sure?")) {
+    const result = await Swal.fire({
+      title: "Are you sure you want to continue?",
+      text: "Deleting this post is permanent and cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ff4757", // הצבע האדום של Craftix
+      cancelButtonColor: "#65676b",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      reverseButtons: true, // הופך את סדר הכפתורים שיתאים לעברית
+    });
+    //If he decided to delete
+    if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
         setPosts(posts.filter((p) => p._id !== postId));
       } catch (err) {
-        alert("Error deleting post.");
+        Swal.fire("Error in deleting", "error");
       }
     }
   };
-
+  //saving post.
   const handleSave = async (postId) => {
     try {
       const response = await api.post(`/posts/save/${postId}`);

@@ -10,7 +10,6 @@ const SavedPosts = ({ currentUser }) => {
   useEffect(() => {
     const fetchSaved = async () => {
       try {
-        // וודא שהנתיב הזה תואם ל-Backend שלך
         const response = await api.get("/users/saved-posts");
         setSavedPosts(response.data);
       } catch (err) {
@@ -22,11 +21,11 @@ const SavedPosts = ({ currentUser }) => {
     fetchSaved();
   }, []);
 
-  // טיפול בהסרה מהרשימה בזמן אמת (Optimistic UI)
+  //unsave post.
   const handleUnsave = async (postId) => {
     try {
       await api.post(`/posts/save/${postId}`);
-      // פילטר מקומי כדי שהפוסט "ייעלם" מהעין מיד בלי לחכות לריענון
+      //deleting the unsave post without refreshing the page.
       setSavedPosts((prev) => prev.filter((post) => post._id !== postId));
     } catch (err) {
       alert("Error removing post from saved.");
@@ -55,8 +54,8 @@ const SavedPosts = ({ currentUser }) => {
               key={post._id}
               post={post}
               currentUser={currentUser}
-              onSave={handleUnsave} // כאן הכפתור פועל כ-Unsave
-              onDelete={() => {}} // בדף שמורים בדרך כלל לא מוחקים פוסט מקורי
+              onSave={handleUnsave} // if we want to unsave.
+              onDelete={() => {}} //we dont delete in this page.
             />
           ))}
         </div>

@@ -10,6 +10,7 @@ const Register = () => {
     "Uruguay",
     "United States",
     "Spain",
+    "Italy",
     "Argentina",
     "Other",
   ];
@@ -29,9 +30,9 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  //Submitting register form.
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //don't refresh.
     setIsSubmitting(true);
     setMessage({ text: "", isSuccess: false });
 

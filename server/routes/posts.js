@@ -6,7 +6,7 @@ const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
 
-// הגדרות אחסון לקבצים (Multer)
+//saving files.
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) =>
@@ -18,7 +18,7 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 }, // מגבלה של 50MB
 });
 
-// יצירת פוסט חדש (פרויקט או פוסט רגיל)
+//Making new post.
 router.post("/", auth, upload.single("media"), async (req, res, next) => {
   try {
     const postData = {
@@ -48,7 +48,7 @@ router.post("/", auth, upload.single("media"), async (req, res, next) => {
   }
 });
 
-// שליפת כל הפוסטים (פיד ראשי) עם חיפוש ו-Double Populate
+// Get posts with search/catagory or without.
 router.get("/", async (req, res, next) => {
   try {
     const { category, search } = req.query;
@@ -68,16 +68,16 @@ router.get("/", async (req, res, next) => {
     console.log("Final MongoDB Query:", JSON.stringify(query));
 
     const posts = await Post.find(query)
-      .populate("author", "displayName profileImage") // יוצר הפוסט הנוכחי
+      .populate("author", "displayName profileImage")
       .populate({
         path: "comments.author",
-        select: "displayName profileImage", // יוצרי התגובות
+        select: "displayName profileImage",
       })
       .populate({
-        path: "parentPost", // הפרויקט המקורי (במידה וזה שיתוף)
+        path: "parentPost",
         populate: {
           path: "author",
-          select: "displayName profileImage", // יוצר הפרויקט המקורי - Populate כפול!
+          select: "displayName profileImage",
         },
       })
       .sort({ createdAt: -1 })
@@ -91,7 +91,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// שליפת פוסטים של המשתמש המחובר (הפרופיל שלי)
+// my profile.
 router.get("/my-posts", auth, async (req, res) => {
   try {
     const posts = await Post.find({ author: req.user.id })
@@ -111,7 +111,7 @@ router.get("/my-posts", auth, async (req, res) => {
   }
 });
 
-// הוספת תגובה לפוסט
+// add comment
 router.post("/:id/comment", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -135,7 +135,7 @@ router.post("/:id/comment", auth, async (req, res) => {
   }
 });
 
-// מחיקת תגובה
+// delete comment
 router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
@@ -164,7 +164,7 @@ router.delete("/:postId/comment/:commentId", auth, async (req, res) => {
   }
 });
 
-// לייק/ביטול לייק לתגובה ספציפית
+// like/unlike comment
 router.post("/:postId/comment/:commentId/like", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
@@ -195,7 +195,7 @@ router.post("/:postId/comment/:commentId/like", auth, async (req, res) => {
   }
 });
 
-// לייק/ביטול לייק לפוסט
+// like/unlike post
 router.post("/like/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -243,7 +243,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// שליפת פוסטים של משתמש ספציפי (לפרופיל) עם חיפוש
+// getting posts of other profile
 router.get("/user/:userId", async (req, res, next) => {
   try {
     const { search } = req.query;
@@ -276,7 +276,7 @@ router.get("/user/:userId", async (req, res, next) => {
   }
 });
 
-// שמירה או ביטול שמירה של פוסט
+// saving/unsaving post
 router.post("/save/:id", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -308,7 +308,7 @@ router.post("/save/:id", auth, async (req, res) => {
   }
 });
 
-// יצירת פוסט "ביצעתי את זה" (שיתוף פרויקט)
+//new i made it post
 router.post(
   "/:id/share-made-this",
   auth,
@@ -327,7 +327,7 @@ router.post(
         author: req.user.id,
         postType: "implementation",
         parentPost: req.params.id,
-        category: originalPost.category, // ירושה אוטומטית של הקטגוריה מהמקור
+        category: originalPost.category,
       });
 
       if (req.file) {
@@ -353,7 +353,7 @@ router.post(
   },
 );
 
-// מחיקת פוסט
+// delete post
 router.delete("/:id", auth, async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);

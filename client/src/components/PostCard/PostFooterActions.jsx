@@ -1,5 +1,5 @@
 import * as s from "./PostCard.styles";
-
+//Reciving from postcard.
 const PostFooterActions = ({
   isLiked,
   likesCount,
@@ -40,17 +40,21 @@ const PostFooterActions = ({
             fontSize: "0.8rem",
           }}
         >
-          🛠️ {showMadeThisForm ? "סגור" : "I Made This!"}
+          🛠️ {showMadeThisForm ? "Close" : "I Made This!"}
         </button>
       )}
     </div>
 
     <div style={s.rightFooterActions}>
-      <button onClick={onSave} style={s.secondaryBtnStyle} title="שמור פוסט">
+      <button onClick={onSave} style={s.secondaryBtnStyle} title="Save post.">
         {isSaved ? "📂" : "💾"}
       </button>
       {isOwner && (
-        <button onClick={onDelete} style={s.deleteBtnStyle} title="מחק פוסט">
+        <button
+          onClick={onDelete}
+          style={s.deleteBtnStyle}
+          title="Delete post. "
+        >
           🗑️
         </button>
       )}

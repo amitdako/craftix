@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import api from "../../api/axios";
 import PostCard from "../PostCard/PostCard"; // שים לב לנתיב המעודכן
 import * as S from "./Feed.styles";
@@ -25,23 +26,35 @@ const Feed = ({ currentUser, onUserUpdate }) => {
     "Electronics",
     "Other",
   ];
-
+  // return to the general feed.
   const clearFilters = () => {
     setSelectedCategory("All");
     navigate("/feed");
   };
-
+  //deleting post.
   const handleDelete = async (postId) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
+    const result = await Swal.fire({
+      title: "Are you sure you want to continue?",
+      text: "Deleting this post is permanent and cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ff4757", // הצבע האדום של Craftix
+      cancelButtonColor: "#65676b",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      reverseButtons: false, // הופך את סדר הכפתורים שיתאים לעברית
+    });
+    //If he decided to delete
+    if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
         setPosts(posts.filter((p) => p._id !== postId));
       } catch (err) {
-        alert("Delete failed.");
+        Swal.fire("Error in deleting", "error");
       }
     }
   };
-
+  //Saving post.
   const handleSave = async (postId) => {
     try {
       const response = await api.post(`/posts/save/${postId}`);
@@ -53,7 +66,7 @@ const Feed = ({ currentUser, onUserUpdate }) => {
     }
   };
 
-  // Logic: Fetch Posts & Users with Debounce
+  //Showing posts in the feed. The feed refreshes whenever the category or search term changes.
   useEffect(() => {
     const fetchEverything = async () => {
       try {
@@ -131,7 +144,7 @@ const Feed = ({ currentUser, onUserUpdate }) => {
         </div>
       )}
 
-      {/* User Search Results (Horizontal) */}
+      {/* User Search Results */}
       {searchTerm && userResults.length > 0 && (
         <div style={S.userResultsSectionStyle}>
           <h4 style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>
