@@ -2,76 +2,40 @@
 
 export const cardStyle = {
   border: "1px solid #eee",
-  padding: "20px",
   borderRadius: "15px",
   backgroundColor: "#fff",
   boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
   position: "relative",
   marginBottom: "20px",
-};
-
-export const topActionsWrapper = {
-  position: "absolute",
-  top: "15px",
-  right: "15px",
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-};
-
-export const categoryBadgeStyle = {
-  fontSize: "12px",
-  backgroundColor: "#f0f2f5",
-  color: "#65676b",
-  padding: "4px 12px",
-  borderRadius: "15px",
-  fontWeight: "600",
-};
-
-export const ellipsisBtnStyle = {
-  background: "none",
-  border: "none",
-  fontSize: "22px",
-  cursor: "pointer",
-  color: "#65676b",
-};
-
-export const dropdownMenuStyle = {
-  position: "absolute",
-  right: "0",
-  top: "35px",
-  backgroundColor: "#fff",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-  borderRadius: "8px",
-  zIndex: "10",
-  width: "160px",
-  border: "1px solid #eee",
   overflow: "hidden",
 };
 
-export const menuItemStyle = {
-  width: "100%",
-  padding: "12px 15px",
-  textAlign: "left",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  fontSize: "14px",
-  borderBottom: "1px solid #f0f2f5",
+// מעטפת ה-Header שיוצרת את הפיצול בין הצדדים
+export const headerWrapper = {
+  display: "flex",
+  justifyContent: "space-between", // דוחף את הקטגוריה לימין ואת הפרופיל לשמאל
+  alignItems: "center",
+  padding: "15px",
+  direction: "ltr", // מבטיח זרימה משמאל לימין: תמונה -> שם
 };
 
-export const authorHeaderStyle = {
+// קבוצת הפרופיל (תמונה + טקסט)
+export const authorInfoGroup = {
   display: "flex",
   alignItems: "center",
-  gap: "10px",
-  marginBottom: "15px",
-  textDecoration: "none",
-  color: "inherit",
+  gap: "12px",
+};
+
+// סידור השם והתאריך אחד מתחת לשני
+export const nameDateStack = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
 };
 
 export const avatarStyle = {
-  width: "35px",
-  height: "35px",
+  width: "40px",
+  height: "40px",
   borderRadius: "50%",
   backgroundColor: "#007bff",
   color: "white",
@@ -81,6 +45,7 @@ export const avatarStyle = {
   fontWeight: "bold",
   overflow: "hidden",
   border: "1px solid #eee",
+  flexShrink: 0,
 };
 
 export const avatarImgStyle = {
@@ -88,11 +53,39 @@ export const avatarImgStyle = {
   height: "100%",
   objectFit: "cover",
 };
-export const authorNameStyle = { fontWeight: "bold", fontSize: "14px" };
+
+export const authorNameStyle = {
+  fontWeight: "bold",
+  fontSize: "15px",
+  textDecoration: "none",
+  color: "#1c1e21",
+};
+
+export const dateStyle = {
+  fontSize: "12px",
+  color: "#65676b",
+  marginTop: "1px",
+};
+
+export const categoryBadgeStyle = {
+  fontSize: "12px",
+  backgroundColor: "#e7f3ff",
+  color: "#1877f2",
+  padding: "4px 12px",
+  borderRadius: "20px",
+  fontWeight: "bold",
+  direction: "rtl",
+};
+
+export const contentTextStyle = {
+  whiteSpace: "pre-wrap",
+  color: "#444",
+  margin: "0 15px 15px 15px", // הוספת Padding שיתאים ל-Header
+  textAlign: "right",
+};
 
 export const mediaWrapperStyle = {
   marginBottom: "15px",
-  borderRadius: "10px",
   overflow: "hidden",
   backgroundColor: "#f0f2f5",
 };
@@ -104,27 +97,11 @@ export const mediaContentStyle = {
   display: "block",
 };
 
-export const contentTextStyle = {
-  whiteSpace: "pre-wrap",
-  color: "#444",
-  margin: "0 0 15px 0",
-};
-
-export const projectDetailsBoxStyle = {
-  backgroundColor: "#f8f9fa",
-  padding: "15px",
-  borderRadius: "10px",
-  borderLeft: "4px solid #007bff",
-};
-
-export const detailItemStyle = { margin: "5px 0" };
-
 export const footerContainerStyle = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginTop: "15px",
-  paddingTop: "15px",
+  padding: "15px",
   borderTop: "1px solid #f0f2f5",
 };
 
@@ -146,7 +123,8 @@ export const likeButtonStyle = {
   outline: "none",
 };
 
-export const commentToggleBtnStyle = { ...likeButtonStyle, marginLeft: "0px" };
+export const commentToggleBtnStyle = { ...likeButtonStyle };
+
 export const likeCountLabel = {
   fontWeight: "bold",
   color: "#65676b",
@@ -157,7 +135,7 @@ export const secondaryBtnStyle = {
   background: "none",
   border: "none",
   cursor: "pointer",
-  fontSize: "18px",
+  fontSize: "1.3rem",
 };
 
 export const deleteBtnStyle = { ...secondaryBtnStyle, opacity: 0.7 };
