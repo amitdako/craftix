@@ -62,8 +62,18 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
     const file = e.target.files[0];
     if (file) {
       setMadeThisMedia(file);
-      setMadeThisPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMadeThisPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+  //remove picture
+  const handleRemoveImage = () => {
+    setMadeThisMedia(null);
+    if (madeThisPreview) URL.revokeObjectURL(madeThisPreview);
+    setMadeThisPreview(null); //deleting from view
   };
   //canceling the form
   const handleCancelForm = () => {
@@ -259,17 +269,20 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           </button>
         </div>
 
-        <ImplementationForm
-          isOpen={isFormOpen}
-          currentUser={currentUser}
-          value={shareComment}
-          onChange={setShareComment}
-          onSubmit={handleSubmitShare}
-          onCancel={handleCancelForm}
-          getImageUrl={getImageUrl}
-          onFileChange={handleFileChange}
-          previewUrl={madeThisPreview}
-        />
+        {isFormOpen && (
+          <ImplementationForm
+            isOpen={isFormOpen}
+            currentUser={currentUser}
+            value={shareComment}
+            onChange={setShareComment}
+            onSubmit={handleSubmitShare}
+            onCancel={handleCancelForm}
+            getImageUrl={getImageUrl}
+            onFileChange={handleFileChange}
+            previewUrl={madeThisPreview}
+            onRemoveImage={handleRemoveImage}
+          />
+        )}
       </div>
 
       {showComments && (

@@ -12,6 +12,7 @@ const ImplementationForm = ({
   getImageUrl,
   onFileChange,
   previewUrl,
+  onRemoveImage,
 }) => {
   if (!isOpen) return null;
 
@@ -45,7 +46,6 @@ const ImplementationForm = ({
       >
         <div style={avatarContainerStyle}>
           {" "}
-          {/* שימוש בסטייל המאובטח */}
           {currentUser?.profileImage ? (
             <img
               src={getImageUrl(currentUser.profileImage)}
@@ -77,15 +77,54 @@ const ImplementationForm = ({
       {previewUrl && (
         <div
           style={{
-            marginBottom: "10px",
-            borderRadius: "8px",
+            position: "relative",
+            marginBottom: "15px",
+            borderRadius: "10px",
             overflow: "hidden",
+            border: "1px solid #eee",
+            backgroundColor: "#f0f0f0",
+            maxWidth: "100%",
           }}
         >
+          {/* כפתור האיקס - הוספתי zIndex ושיניתי מיקום */}
+          <button
+            type="button" // חשוב כדי שלא ישלח את הטופס בלחיצה
+            onClick={(e) => {
+              e.preventDefault();
+              onRemoveImage();
+            }}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              zIndex: 10, // מוודא שהוא מעל התמונה
+              backgroundColor: "rgba(0, 0, 0, 0.7)", // כהה יותר כדי שיראו טוב
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              width: "30px",
+              height: "30px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "20px",
+              fontWeight: "bold",
+              lineHeight: "1",
+            }}
+            title="הסר תמונה"
+          >
+            ×
+          </button>
           <img
             src={previewUrl}
             alt="Preview"
-            style={{ width: "100%", maxHeight: "250px", objectFit: "cover" }}
+            style={{
+              width: "100%",
+              maxHeight: "300px",
+              objectFit: "cover",
+              display: "block",
+            }}
           />
         </div>
       )}

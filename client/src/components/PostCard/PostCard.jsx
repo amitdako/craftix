@@ -50,6 +50,12 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
       setMadeThisPreview(URL.createObjectURL(file));
     }
   };
+  //remove picture that i added before posting.
+  const handleRemoveImage = () => {
+    setMadeThisMedia(null);
+    if (madeThisPreview) URL.revokeObjectURL(madeThisPreview); // cleaning memory
+    setMadeThisPreview(null);
+  };
 
   //Make like.
   const handleLike = async (e) => {
@@ -217,6 +223,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
           getImageUrl={getImageUrl}
           onFileChange={handleMadeThisFileChange}
           previewUrl={madeThisPreview}
+          onRemoveImage={handleRemoveImage}
         />
       )}
 
