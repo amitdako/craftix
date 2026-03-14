@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as S from "./Navbar.styles";
+import { translations } from "../../translations";
 
-const Navbar = ({ user, handleLogout, logo }) => {
+const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
   const [navSearch, setNavSearch] = useState("");
   const navigate = useNavigate();
-  //Checking if there is input in the search.
+
+  const t = translations[currentLang];
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setNavSearch(value);
-
     if (value.trim() !== "") {
       navigate(`/feed?search=${encodeURIComponent(value)}`);
     } else {
@@ -42,22 +44,25 @@ const Navbar = ({ user, handleLogout, logo }) => {
             </div>
             <div style={S.userActionsStyle}>
               <span>
-                Hey, <strong>{user.displayName}</strong>
+                {/* Hey מתחלף להיי */}
+                {t.hey}, <strong>{user.displayName}</strong>
               </span>
               <button onClick={handleLogout} style={S.logoutButtonStyle}>
-                Logout
+                {/* Logout מתחלף להתנתקות */}
+                {t.logout}
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Center: Global Search (Only if logged in) */}
+      {/* Center: Global Search */}
       {user && (
         <form onSubmit={handleFormSubmit} style={S.searchFormStyle}>
           <input
             type="text"
-            placeholder="🔍 Search projects or makers..."
+            // הפלייסהולדר נשלף מהמילון
+            placeholder={t.searchPlaceholder}
             value={navSearch}
             onChange={handleInputChange}
             style={S.searchInputStyle}
@@ -65,31 +70,47 @@ const Navbar = ({ user, handleLogout, logo }) => {
         </form>
       )}
 
-      {/* Right : Navigation */}
+      {/* Right: Navigation */}
       <div style={S.rightLinksWrapper}>
-        {user ? ( //if there is a user connectd.
+        {/* כפתור החלפת שפה */}
+        <button
+          onClick={toggleLanguage}
+          style={{
+            background: "none",
+            border: "1px solid #ccc",
+            borderRadius: "20px",
+            padding: "4px 12px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            color: "#1c1e21",
+            marginRight: "15px",
+          }}
+        >
+          {currentLang === "en" ? "עברית" : "English"}
+        </button>
+
+        {user ? (
           <>
             <Link to="/feed" style={S.linkStyle}>
-              Feed
+              {t.feed}
             </Link>
             <Link to="/saved-posts" style={S.linkStyle}>
-              Saved
+              {t.saved}
             </Link>
             <Link to="/profile" style={S.linkStyle}>
-              My Profile
+              {t.profile}
             </Link>
             <Link to="/create-post" style={S.newProjectBtnStyle}>
-              + New Project
+              {t.newProject}
             </Link>
           </>
         ) : (
-          //if there is not user connected.
           <>
             <Link to="/login" style={S.linkStyle}>
-              Login
+              {t.login}
             </Link>
             <Link to="/register" style={S.linkStyle}>
-              Register
+              {t.register}
             </Link>
           </>
         )}

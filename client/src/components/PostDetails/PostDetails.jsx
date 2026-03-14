@@ -6,8 +6,10 @@ import * as S from "./PostDetails.styles";
 import PostHeader from "./PostHeader";
 import SharedBox from "./SharedBox";
 import ImplementationForm from "../ImplementationForm/ImplementationForm";
+import Swal from "sweetalert2";
+import { translations } from "../../translations";
 
-const PostDetails = ({ currentUser, onUserUpdate }) => {
+const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,10 +25,13 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
   const [shareComment, setShareComment] = useState("");
   const [madeThisMedia, setMadeThisMedia] = useState(null);
   const [madeThisPreview, setMadeThisPreview] = useState(null);
+  const [commentText, setCommentText] = useState("");
+
+  const t = translations[currentLang] || translations.en;
 
   const formatDateTime = (ds) =>
     ds
-      ? new Date(ds).toLocaleString("he-IL", {
+      ? new Date(ds).toLocaleString(currentLang === "he" ? "he-IL" : "en-US", {
           day: "2-digit",
           month: "2-digit",
           year: "numeric",
@@ -57,7 +62,6 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
     if (id) fetchPost();
   }, [id]);
 
-  //changing file.
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -69,32 +73,32 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
       reader.readAsDataURL(file);
     }
   };
-  //remove picture
+
   const handleRemoveImage = () => {
     setMadeThisMedia(null);
     if (madeThisPreview) URL.revokeObjectURL(madeThisPreview);
-    setMadeThisPreview(null); //deleting from view
+    setMadeThisPreview(null);
   };
-  //canceling the form
+
   const handleCancelForm = () => {
     setIsFormOpen(false);
     setShareComment("");
     setMadeThisMedia(null);
     setMadeThisPreview(null);
   };
-  // doing like
+
   const handleLike = async (e) => {
     e.preventDefault();
     const res = await api.post(`/posts/like/${post._id}`);
     setLikes(res.data.likes || []);
   };
-  //saving post
+
   const handleSave = async (e) => {
     e.preventDefault();
     const res = await api.post(`/posts/save/${post._id}`);
     if (onUserUpdate) onUserUpdate({ savedPosts: res.data.savedPosts });
   };
-  //sharing post.
+
   const handleSubmitShare = async () => {
     if (!shareComment.trim()) return;
     try {
@@ -119,16 +123,66 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
     }
   };
 
-  if (loading) return <div style={S.loading}>loading... 🛠️</div>;
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      const response = await api.post(`/posts/${post._id}/comment`, {
+        text: commentText,
+      });
+      setAllComments(response.data);
+      setCommentText("");
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
+
+  const handleLikeComment = async (commentId) => {
+    try {
+      const response = await api.post(
+        `/posts/${post._id}/comment/${commentId}/like`,
+      );
+      setAllComments(response.data);
+    } catch (err) {
+      console.error("Error liking comment:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    const result = await Swal.fire({
+      title: t.deleteCommentTitle,
+      text: t.deleteCommentText,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ff4757",
+      cancelButtonColor: "#65676b",
+      confirmButtonText: t.deleteBtn,
+      cancelButtonText: t.cancelBtn,
+      reverseButtons: currentLang === "he",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await api.delete(
+          `/posts/${post._id}/comment/${commentId}`,
+        );
+        setAllComments(response.data);
+      } catch (err) {
+        console.error("Error deleting comment:", err);
+      }
+    }
+  };
+
+  if (loading) return <div style={S.loading}>{t.loading} 🛠️</div>;
   if (!post)
     return (
-      <div style={{ ...S.loading, color: "#dc3545" }}>Post didn't found.</div>
+      <div style={{ ...S.loading, color: "#dc3545" }}>{t.postNotFound}</div>
     );
 
   const currentUserId = currentUser?.id || currentUser?._id;
 
   return (
-    <div style={{ padding: "20px", direction: "rtl" }}>
+    <div style={{ padding: "20px", direction: "inherit" }}>
       <button
         onClick={() => navigate(-1)}
         style={{
@@ -143,11 +197,17 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           gap: "5px",
         }}
       >
-        <span>→</span> back
+        <span
+          style={{ transform: currentLang === "he" ? "none" : "scaleX(-1)" }}
+        >
+          →
+        </span>{" "}
+        {t.back}
       </button>
 
       <div style={S.container}>
         <PostHeader
+          currentLang={currentLang}
           author={post.author}
           createdAt={post.createdAt}
           category={post.category || post.parentPost?.category}
@@ -168,12 +228,16 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
           </div>
         )}
 
-        <div style={{ paddingTop: "15px" }}>
+        <div style={{ paddingTop: "15px", textAlign: "inherit" }}>
           {post.title && <h2 style={S.title}>{post.title}</h2>}
           <p style={S.description}>{post.content}</p>
         </div>
 
-        <SharedBox parentPost={post.parentPost} getImageUrl={getImageUrl} />
+        <SharedBox
+          parentPost={post.parentPost}
+          getImageUrl={getImageUrl}
+          currentLang={currentLang}
+        />
 
         <div
           style={{
@@ -248,9 +312,12 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
                   fontWeight: "bold",
                   cursor: "pointer",
                   fontSize: "0.8rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
                 }}
               >
-                🛠️ {isFormOpen ? "Close" : "I Made This!"}
+                🛠️ {isFormOpen ? t.close : t.iMadeThis}
               </button>
             )}
           </div>
@@ -262,6 +329,7 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
               cursor: "pointer",
               fontSize: "1.2rem",
             }}
+            title={t.saveTitle}
           >
             {currentUser?.savedPosts?.some((s) => (s._id || s) === post._id)
               ? "📂"
@@ -271,10 +339,11 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
 
         {isFormOpen && (
           <ImplementationForm
+            currentLang={currentLang}
             isOpen={isFormOpen}
             currentUser={currentUser}
             value={shareComment}
-            onChange={setShareComment}
+            onChange={shareComment}
             onSubmit={handleSubmitShare}
             onCancel={handleCancelForm}
             getImageUrl={getImageUrl}
@@ -287,9 +356,14 @@ const PostDetails = ({ currentUser, onUserUpdate }) => {
 
       {showComments && (
         <CommentSection
+          currentLang={currentLang}
           allComments={allComments}
           currentUserId={currentUserId}
-          formatDateTime={formatDateTime}
+          handleDeleteComment={handleDeleteComment}
+          handleLikeComment={handleLikeComment}
+          handleAddComment={handleAddComment}
+          commentText={commentText}
+          setCommentText={setCommentText}
         />
       )}
     </div>

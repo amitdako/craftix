@@ -20,7 +20,7 @@ export const avatar = {
   borderRadius: "50%",
   overflow: "hidden",
   flexShrink: 0,
-  backgroundColor: "#007bff", // רקע ברירת מחדל לאות
+  backgroundColor: "#007bff",
   color: "white",
   display: "flex",
   alignItems: "center",

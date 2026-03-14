@@ -1,7 +1,9 @@
 import React from "react";
 import * as s from "./CommentSection.styles";
-//receiving this data from postcard.
+import { translations } from "../../translations";
+
 const CommentSection = ({
+  currentLang,
   allComments,
   currentUserId,
   handleDeleteComment,
@@ -22,21 +24,23 @@ const CommentSection = ({
     });
   };
 
+  const t = translations[currentLang] || translations.en;
+
   return (
     <div style={s.commentSectionContainer}>
-      <h3 style={s.titleStyle}>Comments</h3>
+      <h3 style={s.titleStyle}>{t.commentsTitle}</h3>
 
       {/* Adding comment form */}
       <form onSubmit={handleAddComment} style={s.formStyle}>
         <input
           type="text"
-          placeholder="Write a comment..."
+          placeholder={t.commentPlaceholder}
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           style={s.inputStyle}
         />
         <button type="submit" style={s.sendBtnStyle}>
-          send
+          {t.send} {/* כפתור שליחה */}
         </button>
       </form>
 
@@ -79,9 +83,12 @@ const CommentSection = ({
                     color: comment.likes?.includes(currentUserId)
                       ? "#ff4d4d"
                       : "#65676b",
+                    display: "flex",
+                    gap: "4px",
                   }}
                 >
-                  Likes ({comment.likes?.length || 0})
+                  {t.likes}{" "}
+                  <span dir="ltr">({comment.likes?.length || 0})</span>
                 </button>
 
                 {comment.author?._id === currentUserId && (
@@ -89,7 +96,7 @@ const CommentSection = ({
                     onClick={() => handleDeleteComment(comment._id)}
                     style={{ ...s.actionBtnBase, color: "#dc3545" }}
                   >
-                    Delete
+                    {t.delete}
                   </button>
                 )}
               </div>

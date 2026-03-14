@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../api/axios";
 import PostCard from "../PostCard/PostCard";
+import { translations } from "../../translations";
 import * as S from "./Profile.styles";
 import Swal from "sweetalert2";
 
-const Profile = ({ currentUser, onUpdateUser }) => {
+const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
+  const t = translations[currentLang];
   const { id } = useParams(); //taking the id from the url.
   const [profileUser, setProfileUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -86,11 +88,11 @@ const Profile = ({ currentUser, onUpdateUser }) => {
       text: "Deleting this post is permanent and cannot be undone.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757", // הצבע האדום של Craftix
+      confirmButtonColor: "#ff4757",
       cancelButtonColor: "#65676b",
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
-      reverseButtons: true, // הופך את סדר הכפתורים שיתאים לעברית
+      reverseButtons: true,
     });
     //If he decided to delete
     if (result.isConfirmed) {
@@ -150,13 +152,13 @@ const Profile = ({ currentUser, onUpdateUser }) => {
           {isMyProfile && (
             <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
               <Link to="/create-post" style={S.actionButtonStyle}>
-                ➕ New Project
+                ➕ {t.newProject}
               </Link>
               <button
                 onClick={() => fileInputRef.current.click()}
                 style={S.editButtonStyle}
               >
-                📷 Change Photo
+                📷 {t.changePhoto}
               </button>
               <input
                 type="file"
@@ -174,21 +176,35 @@ const Profile = ({ currentUser, onUpdateUser }) => {
       <div style={{ marginBottom: "30px" }}>
         <input
           type="text"
-          placeholder={`🔍 Search in ${profileUser?.displayName || "this profile"}'s projects...`}
+          placeholder={`🔍 ${t.searchPrefix} ${profileUser?.displayName || "user"}${t.searchSuffix}`}
           value={profileSearch}
           onChange={(e) => setProfileSearch(e.target.value)}
           style={S.profileSearchInputStyle}
         />
       </div>
-
-      <h3 style={S.sectionTitleStyle}>
+      <h3
+        style={{
+          ...S.sectionTitleStyle,
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}
+      >
         {isMyProfile
-          ? "My Shared Projects"
-          : `${profileUser?.displayName || "User"}'s Projects`}{" "}
-        ({posts.length})
+          ? `${t.myprojPrefix}${profileUser?.displayName || "User"}${t.myprojSuffix}`
+          : `${profileUser?.displayName || "User"}${currentLang === "en" ? "'s Projects" : " - פרויקטים"}`}
+
+        <span dir="ltr">({posts.length})</span>
+
         {postsLoading && (
-          <span style={{ fontSize: "12px", marginLeft: "10px", color: "#999" }}>
-            Updating...
+          <span
+            style={{
+              fontSize: "12px",
+              marginInlineStart: "10px",
+              color: "#999",
+            }}
+          >
+            {currentLang === "en" ? "Updating..." : "מעדכן..."}
           </span>
         )}
       </h3>

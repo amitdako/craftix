@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
-const TagInput = ({ tags, setTags, placeholder }) => {
+const TagInput = ({ tags, setTags, placeholder, currentLang }) => {
   const [inputValue, setInputValue] = useState("");
-  //if there is enter or , make it tag.
+
+  // if there is enter or , make it tag.
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
@@ -11,7 +12,7 @@ const TagInput = ({ tags, setTags, placeholder }) => {
         setTags([...tags, value]);
         setInputValue("");
       }
-      //delete the last tag.
+      // delete the last tag.
     } else if (e.key === "Backspace" && !inputValue && tags.length > 0) {
       setTags(tags.slice(0, -1));
     }
@@ -29,6 +30,7 @@ const TagInput = ({ tags, setTags, placeholder }) => {
         backgroundColor: "#fff",
         marginBottom: "15px",
         alignItems: "center",
+        direction: currentLang === "he" ? "rtl" : "ltr",
       }}
     >
       {tags.map((tag, index) => (
@@ -42,13 +44,14 @@ const TagInput = ({ tags, setTags, placeholder }) => {
             fontSize: "13px",
             fontWeight: "bold",
             display: "flex",
+            alignItems: "center",
             gap: "5px",
           }}
         >
           {tag}
           <span
             onClick={() => setTags(tags.filter((_, i) => i !== index))}
-            style={{ cursor: "pointer", color: "#666" }}
+            style={{ cursor: "pointer", color: "#666", fontSize: "16px" }}
           >
             ×
           </span>
@@ -60,7 +63,13 @@ const TagInput = ({ tags, setTags, placeholder }) => {
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={tags.length === 0 ? placeholder : ""}
-        style={{ border: "none", outline: "none", flex: 1, minWidth: "120px" }}
+        style={{
+          border: "none",
+          outline: "none",
+          flex: 1,
+          minWidth: "120px",
+          textAlign: "inherit",
+        }}
       />
     </div>
   );

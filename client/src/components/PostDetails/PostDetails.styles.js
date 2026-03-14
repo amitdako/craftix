@@ -56,7 +56,6 @@ export const loading = {
   color: "#666",
 };
 
-// --- סטיילים לטופס ---
 export const formHeaderWrapper = {
   display: "flex",
   alignItems: "center",

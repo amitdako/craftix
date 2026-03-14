@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import * as S from "./CreatePost.styles";
 import Taginput from "../Taginput/Taginput";
+import { translations } from "../../translations";
 
-const CreatePost = () => {
+const CreatePost = ({ currentLang }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [postType, setPostType] = useState("general");
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  const t = translations[currentLang] || translations.en;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -22,13 +25,13 @@ const CreatePost = () => {
   });
 
   const categories = [
-    "Cooking",
-    "Woodworking",
-    "Painting",
-    "Knitting",
-    "Plumbing",
-    "Electronics",
-    "Other",
+    { id: "Cooking", label: t.cooking },
+    { id: "Woodworking", label: t.woodworking },
+    { id: "Painting", label: t.painting },
+    { id: "Knitting", label: t.knitting },
+    { id: "Plumbing", label: t.plumbing },
+    { id: "Electronics", label: t.electronics },
+    { id: "Other", label: t.other },
   ];
 
   //Deleting irelevnt date when we finish to use it.
@@ -90,7 +93,7 @@ const CreatePost = () => {
       });
       navigate("/feed");
     } catch (err) {
-      setError("Something went wrong. Please check your connection.");
+      setError(t.errorConnection);
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +101,7 @@ const CreatePost = () => {
 
   return (
     <div style={S.containerStyle}>
-      <h2 style={S.titleStyle}>New post</h2>
+      <h2 style={S.titleStyle}>{t.newPost}</h2>
 
       {/* Select type */}
       <div style={S.typeSelectorStyle}>
@@ -107,25 +110,25 @@ const CreatePost = () => {
           onClick={() => setPostType("general")}
           style={S.typeButtonStyle(postType === "general")}
         >
-          General
+          {t.general}
         </button>
         <button
           type="button"
           onClick={() => setPostType("project")}
           style={S.typeButtonStyle(postType === "project")}
         >
-          Project
+          {t.project}
         </button>
       </div>
 
       <form onSubmit={handleSubmit}>
         {postType === "project" && (
           <>
-            <label style={S.labelStyle}>Project Title</label>
+            <label style={S.labelStyle}>{t.projectTitle}</label>
             <input
               type="text"
               name="title"
-              placeholder="What is your product?"
+              placeholder={t.productPlaceholder}
               style={S.inputStyle}
               onChange={handleChange}
               required
@@ -133,34 +136,34 @@ const CreatePost = () => {
           </>
         )}
 
-        <label style={S.labelStyle}>Category</label>
+        <label style={S.labelStyle}>{t.category}</label>
         <select name="category" style={S.inputStyle} onChange={handleChange}>
           {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
+            <option key={cat.id} value={cat.id}>
+              {cat.label}
             </option>
           ))}
         </select>
 
         {postType === "project" && (
           <>
-            <label style={S.labelStyle}>Tools</label>
+            <label style={S.labelStyle}>{t.tools}</label>
             <Taginput
               tags={formData.tools}
               setTags={(newTags) =>
                 setFormData({ ...formData, tools: newTags })
               }
-              placeholder="Press Enter to add tools (Hammer, Drill...)"
+              placeholder={t.toolsPlaceholder}
             />
-            <label style={S.labelStyle}>Materials</label>
+            <label style={S.labelStyle}>{t.materials}</label>
             <Taginput
               tags={formData.materials}
               setTags={(newTags) =>
                 setFormData({ ...formData, materials: newTags })
               }
-              placeholder="Press Enter to add materials (Wood, Screws...)"
+              placeholder={t.materialsPlaceholder}
             />
-            <label style={S.labelStyle}>Difficulty (1-5)</label>
+            <label style={S.labelStyle}>{t.difficulty}</label>
             <select
               name="difficulty"
               style={S.inputStyle}
@@ -176,17 +179,17 @@ const CreatePost = () => {
         )}
 
         <label style={S.labelStyle}>
-          {postType === "project" ? "Instructions" : "Content"}
+          {postType === "project" ? t.instructions : t.content}
         </label>
         <textarea
           name="content"
-          placeholder="Share your story..."
+          placeholder={t.storyPlaceholder}
           style={{ ...S.inputStyle, height: "120px", resize: "none" }}
           onChange={handleChange}
           required
         />
 
-        <label style={S.labelStyle}>Upload Image or Video</label>
+        <label style={S.labelStyle}>{t.uploadMedia}</label>
         <input
           type="file"
           accept="image/*,video/*"
@@ -235,7 +238,7 @@ const CreatePost = () => {
           disabled={isSubmitting}
           style={S.submitButtonStyle(isSubmitting)}
         >
-          {isSubmitting ? "Posting..." : "Publish to Feed"}
+          {isSubmitting ? t.posting : t.publish}
         </button>
       </form>
 

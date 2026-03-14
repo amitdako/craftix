@@ -1,5 +1,15 @@
-const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
+import React from "react";
+import { translations } from "../../translations";
+
+const PostImplementationBox = ({
+  currentLang,
+  parentPost,
+  getImageUrl,
+  onNavigate,
+}) => {
   if (!parentPost) return null;
+
+  const t = translations[currentLang] || translations.en;
 
   return (
     <div
@@ -9,23 +19,21 @@ const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
         border: "1px solid #e0e0e0",
         borderRadius: "10px",
         backgroundColor: "#f9f9f9",
-        textAlign: "right",
+        textAlign: "inherit",
         cursor: "pointer",
       }}
       onClick={onNavigate}
     >
-      {/* Header in left*/}
+      {/* Header: User Info */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
           marginBottom: "12px",
-          justifyContent: "flex-start",
-          direction: "ltr",
         }}
       >
-        {/* picture of the original user.*/}
+        {/* Profile picture */}
         <div
           style={{
             width: "28px",
@@ -59,19 +67,17 @@ const PostImplementationBox = ({ parentPost, getImageUrl, onNavigate }) => {
             fontSize: "0.85rem",
             fontWeight: "bold",
             color: "#555",
-            direction: "rtl",
           }}
         >
-          {parentPost.author?.displayName || "יוצר מקורי"}
+          {parentPost.author?.displayName || t.originalCreator}
         </span>
       </div>
 
-      {/* picture and title of the project*/}
+      {/* Project info: Image and title */}
       <div
         style={{
           display: "flex",
           gap: "10px",
-          flexDirection: "row-reverse",
           alignItems: "center",
         }}
       >

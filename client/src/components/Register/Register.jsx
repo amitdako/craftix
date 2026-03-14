@@ -1,18 +1,21 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import * as S from "./Register.styles";
+import { translations } from "../../translations";
 
-const Register = () => {
+const Register = ({ currentLang }) => {
+  const t = translations[currentLang] || translations.en;
+
   const countries = [
-    "Israel",
-    "Lithuania",
-    "Uruguay",
-    "United States",
-    "Spain",
-    "Italy",
-    "Argentina",
-    "Other",
+    { id: "Israel", label: t.israel },
+    { id: "Lithuania", label: t.lithuania },
+    { id: "Uruguay", label: t.uruguay },
+    { id: "United States", label: t.usa },
+    { id: "Spain", label: t.spain },
+    { id: "Italy", label: t.italy },
+    { id: "Argentina", label: t.argentina },
+    { id: "Other", label: t.other },
   ];
 
   const [formData, setFormData] = useState({
@@ -30,21 +33,21 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  //Submitting register form.
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); //don't refresh.
+    e.preventDefault();
     setIsSubmitting(true);
     setMessage({ text: "", isSuccess: false });
 
     try {
       const response = await api.post("/users/register", formData);
       setMessage({
-        text: `Welcome to Craftix, ${response.data.user.displayName}! You can now log in.`,
+        text: `${t.regSuccess}${response.data.user.displayName}${t.regSuccessSuffix}`,
         isSuccess: true,
       });
     } catch (err) {
       setMessage({
-        text: err.response?.data?.message || "Registration failed. Try again.",
+        text: err.response?.data?.message || t.regFailed,
         isSuccess: false,
       });
     } finally {
@@ -54,13 +57,13 @@ const Register = () => {
 
   return (
     <div style={S.containerStyle}>
-      <h2 style={S.titleStyle}>Join Craftix Community</h2>
+      <h2 style={S.titleStyle}>{t.joinTitle}</h2>
 
       <form onSubmit={handleSubmit} style={S.formStyle}>
         <input
           type="text"
           name="fullName"
-          placeholder="Full Name"
+          placeholder={t.fullName}
           onChange={handleChange}
           style={S.inputStyle}
           required
@@ -69,7 +72,7 @@ const Register = () => {
         <input
           type="text"
           name="displayName"
-          placeholder="Display Name (Profile Name)"
+          placeholder={t.displayName}
           onChange={handleChange}
           style={S.inputStyle}
         />
@@ -77,14 +80,14 @@ const Register = () => {
         <input
           type="email"
           name="email"
-          placeholder="Email Address"
+          placeholder={t.emailPlaceholder}
           onChange={handleChange}
           style={S.inputStyle}
           required
         />
 
-        <div>
-          <label style={S.labelStyle}>Date of Birth:</label>
+        <div style={{ textAlign: "inherit" }}>
+          <label style={S.labelStyle}>{t.birthDate}</label>
           <input
             type="date"
             name="birthDate"
@@ -94,8 +97,8 @@ const Register = () => {
           />
         </div>
 
-        <div>
-          <label style={S.labelStyle}>Country:</label>
+        <div style={{ textAlign: "inherit" }}>
+          <label style={S.labelStyle}>{t.country}</label>
           <select
             name="country"
             value={formData.country}
@@ -104,11 +107,11 @@ const Register = () => {
             required
           >
             <option value="" disabled>
-              Select your country
+              {t.selectCountry}
             </option>
             {countries.map((c) => (
-              <option key={c} value={c}>
-                {c}
+              <option key={c.id} value={c.id}>
+                {c.label}
               </option>
             ))}
           </select>
@@ -117,7 +120,7 @@ const Register = () => {
         <input
           type="password"
           name="password"
-          placeholder="Create Password"
+          placeholder={t.createPassword}
           onChange={handleChange}
           style={S.inputStyle}
           required
@@ -128,7 +131,7 @@ const Register = () => {
           disabled={isSubmitting}
           style={S.buttonStyle(isSubmitting)}
         >
-          {isSubmitting ? "Creating Account..." : "Sign Up"}
+          {isSubmitting ? t.creatingAccount : t.signUpBtn}
         </button>
       </form>
 
@@ -144,9 +147,9 @@ const Register = () => {
           color: "#65676b",
         }}
       >
-        Already a member?{" "}
+        {t.alreadyMember}{" "}
         <Link to="/login" style={{ color: "#007bff", textDecoration: "none" }}>
-          Log in
+          {t.logIn}
         </Link>
       </p>
     </div>

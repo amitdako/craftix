@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
-import PostCard from "../PostCard/PostCard"; // נתיב מעודכן
+import PostCard from "../PostCard/PostCard";
 import * as S from "./SavedPosts.styles";
+import { translations } from "../../translations";
 
-const SavedPosts = ({ currentUser }) => {
+const SavedPosts = ({ currentLang, currentUser }) => {
   const [savedPosts, setSavedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const t = translations[currentLang] || translations.en;
 
   useEffect(() => {
     const fetchSaved = async () => {
@@ -28,30 +31,29 @@ const SavedPosts = ({ currentUser }) => {
       //deleting the unsave post without refreshing the page.
       setSavedPosts((prev) => prev.filter((post) => post._id !== postId));
     } catch (err) {
-      alert("Error removing post from saved.");
+      alert(t.unsaveError);
     }
   };
 
   if (loading) {
-    return <p style={S.loadingStyle}>Gathering your collection...</p>;
+    return <p style={S.loadingStyle}>{t.gatheringCollection}</p>;
   }
 
   return (
     <div style={S.containerStyle}>
-      <h2 style={S.titleStyle}>My Saved Projects</h2>
+      <h2 style={S.titleStyle}>{t.savedTitle}</h2>
 
       {savedPosts.length === 0 ? (
         <div style={S.messageStyle}>
-          <p>You haven't saved any projects yet.</p>
-          <p style={{ fontSize: "14px" }}>
-            Go explore the feed and find your next DIY inspiration! 🛠️
-          </p>
+          <p>{t.noSavedPosts}</p>
+          <p style={{ fontSize: "14px" }}>{t.exploreInspiration}</p>
         </div>
       ) : (
         <div style={S.gridStyle}>
           {savedPosts.map((post) => (
             <PostCard
               key={post._id}
+              currentLang={currentLang}
               post={post}
               currentUser={currentUser}
               onSave={handleUnsave} // if we want to unsave.

@@ -1,6 +1,6 @@
 // Register.styles.js
 export const containerStyle = {
-  maxWidth: "450px", // מעט רחב יותר מהלוגין בגלל כמות השדות
+  maxWidth: "450px", 
   margin: "50px auto",
   padding: "30px",
   backgroundColor: "#fff",
@@ -19,8 +19,7 @@ export const titleStyle = {
 export const formStyle = {
   display: "flex",
   flexDirection: "column",
-  gap: "12px", // רווח קבוע בין השדות
-};
+  gap: "12px", 
 
 export const inputStyle = {
   width: "100%",
@@ -45,7 +44,7 @@ export const buttonStyle = (isSubmitting) => ({
   padding: "14px",
   borderRadius: "8px",
   border: "none",
-  backgroundColor: "#28a745", // ירוק מסמל "יצירה" ורישום
+  backgroundColor: "#28a745", 
   color: "#fff",
   fontSize: "16px",
   fontWeight: "bold",

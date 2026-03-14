@@ -90,6 +90,8 @@ export const rightLinksWrapper = {
   display: "flex",
   gap: "15px",
   alignItems: "center",
+  gap: "25px",
+  marginLeft: "30px",
 };
 
 export const linkStyle = {

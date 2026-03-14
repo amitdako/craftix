@@ -10,13 +10,13 @@ export const cardStyle = {
   overflow: "hidden",
 };
 
-// מעטפת ה-Header שיוצרת את הפיצול בין הצדדים
 export const headerWrapper = {
   display: "flex",
-  justifyContent: "space-between", // דוחף את הקטגוריה לימין ואת הפרופיל לשמאל
+  justifyContent: "space-between",
   alignItems: "center",
   padding: "15px",
-  direction: "ltr", // מבטיח זרימה משמאל לימין: תמונה -> שם
+  direction: "ltr",
+  flexDirection: "row",
 };
 
 // קבוצת הפרופיל (תמונה + טקסט)
@@ -24,13 +24,15 @@ export const authorInfoGroup = {
   display: "flex",
   alignItems: "center",
   gap: "12px",
+  flexDirection: "row",
+  direction: "ltr",
 };
 
-// סידור השם והתאריך אחד מתחת לשני
-export const nameDateStack = {
+export const textStack = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
+  textAlign: "left",
 };
 
 export const avatarStyle = {
@@ -80,7 +82,7 @@ export const categoryBadgeStyle = {
 export const contentTextStyle = {
   whiteSpace: "pre-wrap",
   color: "#444",
-  margin: "0 15px 15px 15px", // הוספת Padding שיתאים ל-Header
+  margin: "0 15px 15px 15px",
   textAlign: "right",
 };
 

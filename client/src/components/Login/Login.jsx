@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../../api/axios";
 import * as S from "./Login.styles";
+import { translations } from "../../translations";
 
-const Login = ({ setUser }) => {
+const Login = ({ setUser, currentLang }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const Login = ({ setUser }) => {
     password: "",
   });
 
+  const t = translations[currentLang] || translations.en;
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -35,10 +37,7 @@ const Login = ({ setUser }) => {
 
       navigate("/feed");
     } catch (err) {
-      setMessage(
-        err.response?.data?.message ||
-          "Login failed. Please check your credentials.",
-      );
+      setMessage(err.response?.data?.message || t.loginFailed);
     } finally {
       setIsSubmitting(false);
     }
@@ -46,13 +45,13 @@ const Login = ({ setUser }) => {
 
   return (
     <div style={S.containerStyle}>
-      <h2 style={S.titleStyle}>Login to Craftix</h2>
+      <h2 style={S.titleStyle}>{t.loginTitle}</h2>
 
       <form onSubmit={handleSubmit} style={S.formStyle}>
         <input
           type="email"
           name="email"
-          placeholder="Email Address"
+          placeholder={t.emailPlaceholder}
           onChange={handleChange}
           style={S.inputStyle}
           required
@@ -61,7 +60,7 @@ const Login = ({ setUser }) => {
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder={t.passwordPlaceholder}
           onChange={handleChange}
           style={S.inputStyle}
           required
@@ -72,19 +71,19 @@ const Login = ({ setUser }) => {
           disabled={isSubmitting}
           style={S.buttonStyle(isSubmitting)}
         >
-          {isSubmitting ? "Logging in..." : "Login"}
+          {isSubmitting ? t.loggingIn : t.loginBtn}
         </button>
       </form>
 
       {message && <div style={S.messageStyle}>{message}</div>}
 
       <p style={{ marginTop: "20px", fontSize: "14px", color: "#65676b" }}>
-        Don't have an account?{" "}
+        {t.noAccount}{" "}
         <Link
           to="/register"
           style={{ color: "#007bff", textDecoration: "none" }}
         >
-          Sign up
+          {t.signUp}
         </Link>
       </p>
     </div>

@@ -1,7 +1,7 @@
 // Login.styles.js
 export const containerStyle = {
   maxWidth: "400px",
-  margin: "80px auto", // קצת יותר מרחב מלמעלה
+  margin: "80px auto",
   padding: "40px",
   backgroundColor: "#fff",
   borderRadius: "15px",

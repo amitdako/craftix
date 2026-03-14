@@ -21,14 +21,26 @@ import logo from "./assets/logo.png";
 function AppContent() {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
-    // הגנה: אם הנתונים ב-LocalStorage פגומים, נחזיר null
     try {
       return savedUser ? JSON.parse(savedUser) : null;
     } catch (e) {
       return null;
     }
   });
-
+  const [language, setLanguage] = useState(
+    localStorage.getItem("appLang") || "en",
+  );
+  useEffect(() => {
+    const dir = language === "he" ? "rtl" : "ltr";
+    document.documentElement.dir = dir;
+    document.documentElement.lang = language;
+    //saving the choice
+    localStorage.setItem("appLang", language);
+  }, [language]);
+  //function that will change the languages.
+  const toggleLanguage = () => {
+    setLanguage((prevLang) => (prevLang === "en" ? "he" : "en"));
+  };
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -58,17 +70,26 @@ function AppContent() {
 
   return (
     <div className="App" style={{ fontFamily: "Arial", padding: "20px" }}>
-      <Navbar user={user} handleLogout={handleLogout} logo={logo} />
+      <Navbar
+        user={user}
+        handleLogout={handleLogout}
+        logo={logo}
+        toggleLanguage={toggleLanguage}
+        currentLang={language}
+      />
 
       <Routes>
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={<Login currentLang={language} setUser={setUser} />}
+        />
+        <Route path="/register" element={<Register currentLang={language} />} />
 
         <Route
           path="/saved-posts"
           element={
             <ProtectedRoute>
-              <SavedPosts currentUser={user} />
+              <SavedPosts currentUser={user} currentLang={language} />
             </ProtectedRoute>
           }
         />
@@ -78,7 +99,11 @@ function AppContent() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <Profile currentUser={user} onUpdateUser={updateUser} />
+              <Profile
+                currentUser={user}
+                currentLang={language}
+                onUpdateUser={updateUser}
+              />
             </ProtectedRoute>
           }
         />
@@ -86,31 +111,44 @@ function AppContent() {
           path="/profile/:id"
           element={
             <ProtectedRoute>
-              <Profile currentUser={user} onUpdateUser={updateUser} />
+              <Profile
+                currentUser={user}
+                currentLang={language}
+                onUpdateUser={updateUser}
+              />
             </ProtectedRoute>
           }
         />
 
-        {/* הנתיב החדש לצפייה בפוסט בודד - כולל ProtectedRoute להגנה */}
         <Route
           path="/post/:id"
           element={
             <ProtectedRoute>
-              <PostDetails currentUser={user} onUserUpdate={updateUser} />
+              <PostDetails
+                currentUser={user}
+                currentLang={language}
+                onUserUpdate={updateUser}
+              />
             </ProtectedRoute>
           }
         />
 
         <Route
           path="/feed"
-          element={<Feed currentUser={user} onUserUpdate={updateUser} />}
+          element={
+            <Feed
+              currentLang={language}
+              currentUser={user}
+              onUserUpdate={updateUser}
+            />
+          }
         />
 
         <Route
           path="/create-post"
           element={
             <ProtectedRoute>
-              <CreatePost />
+              <CreatePost currentLang={language} />
             </ProtectedRoute>
           }
         />

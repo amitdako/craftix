@@ -1,8 +1,9 @@
 import React from "react";
-// שים לב לייבוא - אם הקובץ באותה תיקייה זה צריך להיות ./ImplementationForm.styles
 import * as S from "./ImplementationForm.styles";
+import { translations } from "../../translations";
 
 const ImplementationForm = ({
+  currentLang,
   isOpen,
   value,
   onChange,
@@ -16,7 +17,8 @@ const ImplementationForm = ({
 }) => {
   if (!isOpen) return null;
 
-  // הגדרת סטייל מקומית לביטחון - כדי שלא יקפוץ בענק לעולם
+  const t = translations[currentLang] || translations.en;
+
   const avatarContainerStyle = {
     width: "45px",
     height: "45px",
@@ -41,11 +43,9 @@ const ImplementationForm = ({
           alignItems: "center",
           gap: "12px",
           marginBottom: "15px",
-          direction: "ltr",
         }}
       >
         <div style={avatarContainerStyle}>
-          {" "}
           {currentUser?.profileImage ? (
             <img
               src={getImageUrl(currentUser.profileImage)}
@@ -86,9 +86,8 @@ const ImplementationForm = ({
             maxWidth: "100%",
           }}
         >
-          {/* כפתור האיקס - הוספתי zIndex ושיניתי מיקום */}
           <button
-            type="button" // חשוב כדי שלא ישלח את הטופס בלחיצה
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               onRemoveImage();
@@ -97,8 +96,8 @@ const ImplementationForm = ({
               position: "absolute",
               top: "10px",
               right: "10px",
-              zIndex: 10, // מוודא שהוא מעל התמונה
-              backgroundColor: "rgba(0, 0, 0, 0.7)", // כהה יותר כדי שיראו טוב
+              zIndex: 10,
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
               color: "white",
               border: "none",
               borderRadius: "50%",
@@ -112,7 +111,7 @@ const ImplementationForm = ({
               fontWeight: "bold",
               lineHeight: "1",
             }}
-            title="הסר תמונה"
+            title={t.removeMedia}
           >
             ×
           </button>
@@ -131,7 +130,7 @@ const ImplementationForm = ({
 
       <textarea
         autoFocus
-        placeholder="How was your process?"
+        placeholder={t.implementationPlaceholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         style={{
@@ -155,7 +154,6 @@ const ImplementationForm = ({
           justifyContent: "space-between",
           alignItems: "center",
           marginTop: "10px",
-          direction: "ltr",
         }}
       >
         <label
@@ -174,7 +172,7 @@ const ImplementationForm = ({
             style={{ display: "none" }}
           />
           <span style={{ fontSize: "1.2rem" }}>📷</span>
-          Add image/video
+          {t.addImageVideo}
         </label>
 
         <div style={{ display: "flex", gap: "10px" }}>
@@ -190,7 +188,7 @@ const ImplementationForm = ({
               fontWeight: "600",
             }}
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             onClick={onSubmit}
@@ -204,7 +202,7 @@ const ImplementationForm = ({
               fontWeight: "bold",
             }}
           >
-            Share
+            {t.share}
           </button>
         </div>
       </div>

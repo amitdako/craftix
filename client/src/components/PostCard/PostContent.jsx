@@ -1,6 +1,8 @@
+import React from "react";
 import * as s from "./PostCard.styles";
-//reciving the data from postcard.
+
 const PostContent = ({
+  currentLang,
   title,
   content,
   mediaUrl,
@@ -23,7 +25,7 @@ const PostContent = ({
         )}
       </div>
     )}
-    <div style={{ padding: "0 15px 15px 15px", textAlign: "right" }}>
+    <div style={{ padding: "0 15px 15px 15px", textAlign: "inherit" }}>
       {title && (
         <h3 style={{ margin: "0 0 10px 0", fontSize: "1.2rem" }}>{title}</h3>
       )}
@@ -31,4 +33,5 @@ const PostContent = ({
     </div>
   </div>
 );
+
 export default PostContent;

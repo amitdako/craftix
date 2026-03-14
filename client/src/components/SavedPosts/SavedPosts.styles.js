@@ -3,7 +3,7 @@
 export const containerStyle = {
   padding: "20px",
   maxWidth: "800px",
-  margin: "40px auto", // קצת יותר מרחב מלמעלה
+  margin: "40px auto",
 };
 
 export const titleStyle = {

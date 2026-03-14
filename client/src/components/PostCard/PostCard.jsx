@@ -9,17 +9,20 @@ import PostFooterActions from "./PostFooterActions";
 import ImplementationForm from "../ImplementationForm/ImplementationForm";
 import CommentSection from "../CommentSection/CommentSection";
 import Swal from "sweetalert2";
+import { translations } from "../../translations";
 
-const PostCard = ({ post, currentUser, onSave, onDelete }) => {
+const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
   const [likes, setLikes] = useState(post.likes || []);
   const [madeThisMedia, setMadeThisMedia] = useState(null);
   const [madeThisPreview, setMadeThisPreview] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [showMadeThisForm, setShowMadeThisForm] = useState(false);
   const [allComments, setAllComments] = useState(post.comments || []);
-  const [commentText, setCommentText] = useState(""); // חזר למקומו
+  const [commentText, setCommentText] = useState("");
   const [madeThisText, setMadeThisText] = useState("");
   const navigate = useNavigate();
+
+  const t = translations[currentLang] || translations.en;
 
   const currentUserId = currentUser?.id || currentUser?._id;
   const isLiked = likes.includes(currentUserId);
@@ -33,16 +36,18 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
 
   const getImageUrl = (path) =>
     path?.startsWith("http") ? path : `http://localhost:5000${path}`;
-  //date and time of post.
+
+  // date and time of post.
   const formatDateTime = (date) =>
-    new Date(date).toLocaleString("he-IL", {
+    new Date(date).toLocaleString(currentLang === "he" ? "he-IL" : "en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  //Adding file.
+
+  // Adding file.
   const handleMadeThisFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -50,14 +55,15 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
       setMadeThisPreview(URL.createObjectURL(file));
     }
   };
-  //remove picture that i added before posting.
+
+  // remove picture that i added before posting.
   const handleRemoveImage = () => {
     setMadeThisMedia(null);
     if (madeThisPreview) URL.revokeObjectURL(madeThisPreview); // cleaning memory
     setMadeThisPreview(null);
   };
 
-  //Make like.
+  // Make like.
   const handleLike = async (e) => {
     e.stopPropagation();
     try {
@@ -67,19 +73,19 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
       console.error("Error liking post:", err);
     }
   };
-  //Subimt i made it.
+
+  // Submit i made it.
   const handleSubmitMadeThis = async (e) => {
     if (e) e.stopPropagation();
     if (!madeThisText.trim()) return;
     try {
       const data = new FormData();
-      data.append("title", ` My version of ${post.title}`);
+      data.append("title", `${t.myVersionOf} ${post.title}`);
       data.append("content", madeThisText);
       data.append("postType", "implementation");
       data.append("parentPost", post._id);
       data.append("category", post.category || "General");
 
-      // adding media if there is
       if (madeThisMedia) {
         data.append("media", madeThisMedia);
       }
@@ -92,7 +98,7 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  //add comment
+  // add comment
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -101,12 +107,13 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         text: commentText,
       });
       setAllComments(response.data);
-      setCommentText(""); //after we finish, the new comment area is empty.
+      setCommentText("");
     } catch (err) {
       console.error("Error adding comment:", err);
     }
   };
-  //make like to comment.
+
+  // make like to comment.
   const handleLikeComment = async (commentId) => {
     try {
       const response = await api.post(
@@ -117,43 +124,41 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
       console.error("Error liking comment:", err);
     }
   };
-  //delete comment.
+
+  // delete comment.
   const handleDeleteComment = async (commentId) => {
-    //asking if the user confirm the delete.
     const result = await Swal.fire({
-      title: "Are you sure you want to continue?",
-      text: "Deleting this comment is permanent and cannot be undone",
+      title: t.commentDeleteConfirmTitle,
+      text: t.commentDeleteConfirmText,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757", // red for delete.
-      cancelButtonColor: "#65676b", // gray for cancel.
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      reverseButtons: false,
+      confirmButtonColor: "#ff4757",
+      cancelButtonColor: "#65676b",
+      confirmButtonText: t.deleteBtn,
+      cancelButtonText: t.cancelBtn,
+      reverseButtons: currentLang === "he",
     });
     if (result.isConfirmed) {
       try {
         const response = await api.delete(
           `/posts/${post._id}/comment/${commentId}`,
         );
-        //udpating the comments without the one he deleted.
         setAllComments(response.data);
       } catch (err) {
         console.error("Error deleting comment:", err);
         Swal.fire({
           icon: "error",
-          title: "Oops...",
-          text: "Please try again later.",
+          title: t.oops,
+          text: t.tryAgainLater,
         });
       }
     }
   };
 
-  // --- Render ---
   return (
     <div className="post-card" style={s.cardStyle}>
-      {/*title of post */}
       <PostHeader
+        currentLang={currentLang}
         author={post.author}
         createdAt={post.createdAt}
         category={post.category}
@@ -161,8 +166,8 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         formatDateTime={formatDateTime}
       />
 
-      {/* Content of post*/}
       <PostContent
+        currentLang={currentLang}
         title={post.title}
         content={post.content}
         mediaUrl={post.mediaUrl}
@@ -171,9 +176,9 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         onNavigate={() => navigate(`/post/${post._id}`)}
       />
 
-      {/* original post*/}
       {post.postType === "implementation" && (
         <PostImplementationBox
+          currentLang={currentLang}
           parentPost={post.parentPost}
           getImageUrl={getImageUrl}
           onNavigate={(e) => {
@@ -183,8 +188,8 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         />
       )}
 
-      {/* buttons*/}
       <PostFooterActions
+        currentLang={currentLang}
         likesCount={likes.length}
         isLiked={isLiked}
         commentsCount={allComments.length}
@@ -211,9 +216,9 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         }}
       />
 
-      {/* "I Made This form" */}
       {showMadeThisForm && (
         <ImplementationForm
+          currentLang={currentLang}
           isOpen={showMadeThisForm}
           currentUser={currentUser}
           value={madeThisText}
@@ -227,10 +232,10 @@ const PostCard = ({ post, currentUser, onSave, onDelete }) => {
         />
       )}
 
-      {/* comments of post*/}
       {showComments && (
         <div style={{ padding: "15px" }} onClick={(e) => e.stopPropagation()}>
           <CommentSection
+            currentLang={currentLang}
             allComments={allComments}
             currentUserId={currentUserId}
             handleDeleteComment={handleDeleteComment}

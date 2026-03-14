@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
-import PostCard from "../PostCard/PostCard"; // שים לב לנתיב המעודכן
+import PostCard from "../PostCard/PostCard"; 
 import * as S from "./Feed.styles";
+import { translations } from "../../translations";
 
-const Feed = ({ currentUser, onUserUpdate }) => {
+const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userResults, setUserResults] = useState([]);
@@ -16,44 +17,48 @@ const Feed = ({ currentUser, onUserUpdate }) => {
   const searchTerm = searchParams.get("search") || "";
   const navigate = useNavigate();
 
+  const t = translations[currentLang] || translations.en;
+
   const categories = [
-    "All",
-    "Cooking",
-    "Woodworking",
-    "Painting",
-    "Knitting",
-    "Plumbing",
-    "Electronics",
-    "Other",
+    { id: "All", label: t.all },
+    { id: "Cooking", label: t.cooking },
+    { id: "Woodworking", label: t.woodworking },
+    { id: "Painting", label: t.painting },
+    { id: "Knitting", label: t.knitting },
+    { id: "Plumbing", label: t.plumbing },
+    { id: "Electronics", label: t.electronics },
+    { id: "Other", label: t.other },
   ];
+
   // return to the general feed.
   const clearFilters = () => {
     setSelectedCategory("All");
     navigate("/feed");
   };
+
   //deleting post.
   const handleDelete = async (postId) => {
     const result = await Swal.fire({
-      title: "Are you sure you want to continue?",
-      text: "Deleting this post is permanent and cannot be undone.",
+      title: t.deleteConfirmTitle,
+      text: t.deleteConfirmText,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757", // הצבע האדום של Craftix
+      confirmButtonColor: "#ff4757", 
       cancelButtonColor: "#65676b",
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      reverseButtons: false, // הופך את סדר הכפתורים שיתאים לעברית
-    });
+      confirmButtonText: t.deleteBtn,
+      cancelButtonText: t.cancelBtn,
+      reverseButtons: currentLang === "he", 
     //If he decided to delete
     if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
         setPosts(posts.filter((p) => p._id !== postId));
       } catch (err) {
-        Swal.fire("Error in deleting", "error");
+        Swal.fire(t.errorDeleting, "", "error");
       }
     }
   };
+
   //Saving post.
   const handleSave = async (postId) => {
     try {
@@ -110,8 +115,8 @@ const Feed = ({ currentUser, onUserUpdate }) => {
         >
           <span>
             {selectedCategory === "All"
-              ? "🌐 Explore Categories"
-              : `📁 ${selectedCategory}`}
+              ? t.exploreCategories
+              : `📁 ${categories.find((c) => c.id === selectedCategory)?.label || selectedCategory}`}
           </span>
           <span>{isDropdownOpen ? "▲" : "▼"}</span>
         </button>
@@ -120,14 +125,14 @@ const Feed = ({ currentUser, onUserUpdate }) => {
           <div style={S.dropdownMenuStyle}>
             {categories.map((cat) => (
               <div
-                key={cat}
+                key={cat.id}
                 onClick={() => {
-                  setSelectedCategory(cat);
+                  setSelectedCategory(cat.id);
                   setIsDropdownOpen(false);
                 }}
                 style={S.categoryItemStyle}
               >
-                {cat}
+                {cat.label}
               </div>
             ))}
           </div>
@@ -138,7 +143,7 @@ const Feed = ({ currentUser, onUserUpdate }) => {
       {searchTerm && (
         <div style={{ marginBottom: "20px" }}>
           <h3 style={{ fontSize: "16px", color: "#444" }}>
-            Results for:{" "}
+            {t.resultsFor}{" "}
             <span style={{ color: "#007bff" }}>"{searchTerm}"</span>
           </h3>
         </div>
@@ -148,7 +153,7 @@ const Feed = ({ currentUser, onUserUpdate }) => {
       {searchTerm && userResults.length > 0 && (
         <div style={S.userResultsSectionStyle}>
           <h4 style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>
-            People
+            {t.people}
           </h4>
           <div style={S.userListHorizontalStyle}>
             {userResults.map((user) => (
@@ -177,13 +182,12 @@ const Feed = ({ currentUser, onUserUpdate }) => {
       {/* Feed Main Content */}
       <main style={{ position: "relative", zIndex: 1 }}>
         {loading ? (
-          <p style={{ textAlign: "center", color: "#666" }}>
-            Searching Craftix...
-          </p>
+          <p style={{ textAlign: "center", color: "#666" }}>{t.searching}</p>
         ) : posts.length > 0 ? (
           <div style={S.postsListStyle}>
             {posts.map((post) => (
               <PostCard
+                currentLang={currentLang}
                 key={post._id}
                 post={post}
                 currentUser={currentUser}
@@ -195,10 +199,10 @@ const Feed = ({ currentUser, onUserUpdate }) => {
         ) : (
           <div style={S.emptyStateStyle}>
             <p>
-              No projects found for "<strong>{searchTerm}</strong>"
+              {t.noProjectsFound} "<strong>{searchTerm}</strong>"
             </p>
             <button onClick={clearFilters} style={S.clearFilterButtonStyle}>
-              Clear all filters
+              {t.clearFilters}
             </button>
           </div>
         )}
