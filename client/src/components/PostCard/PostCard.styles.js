@@ -83,7 +83,8 @@ export const contentTextStyle = {
   whiteSpace: "pre-wrap",
   color: "#444",
   margin: "0 15px 15px 15px",
-  textAlign: "right",
+  textAlign: "start",
+  unicodeBidi: "plaintext",
 };
 
 export const mediaWrapperStyle = {
