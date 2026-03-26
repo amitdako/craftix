@@ -1,16 +1,40 @@
-# React + Vite
+# Craftix
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A social network aimed at sharing DIY projects, and watching and gaining inspiration from others' projects.
 
-Currently, two official plugins are available:
+## About the Project
+The primary goal of this project was to build a high-performance discovery tool where users can gain inspiration from others' projects. To achieve this, I implemented a dual-feed system:
+* **Topical Feeds:** Curated streams focused on specific DIY niches (e.g., Woodworking, Tech, Home Decor).
+* **Global Discovery:** A seamless, vertical scrolling feed designed for broad exploration.
+  
+## Tech Stack
+* **Frontend:** React.js, React Router.
+* **Backend:** Node.js, Express.js.
+* **Database:** MongoDB.
+* **Cloud & Storage:** AWS, Multer (for multipart/form-data handling).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🏗️ Architecture & Workflow
+The architecture of Craftix is designed for scalability and a clean separation of concerns, ensuring a robust Fullstack environment:
+### 1. Frontend (Client-Side)
+* **Single Page Application (SPA):** Built with React.js to provide a fast, app-like experience without page reloads.
+* **Modular Component Design:** Each UI element (Post, Navbar, Category Feed) is a self-contained component, making the codebase maintainable and reusable.
+* **State Management & Routing:** Uses React Hooks and React Router to handle dynamic content fetching and seamless navigation between DIY categories and the main feed.
 
-## React Compiler
+### 2. Backend (Server-Side)
+* **RESTful API:** Developed with Node.js and Express to manage the flow of data between the user and the database.
+* **Security & Auth:** Handles user authentication and secure data transactions.
+* **Multipart Data Handling:** Uses `Multer` middleware to parse incoming project data, efficiently managing both textual metadata (titles, descriptions) and media files.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. AWS Integration & Storage
+* **Cloud Storage (Amazon S3):** Instead of storing heavy media files directly on the server, Craftix utilizes AWS S3. This ensures high availability and fast loading times for project images and assets.
+* **Lightweight Database Strategy:** The database (MongoDB) only stores the metadata and the unique AWS S3 URL. This "Pointer" strategy keeps the database highly performant and prevents storage bloat.
+* **Global Content Delivery:** By serving assets through AWS, the platform ensures that project inspiration is delivered quickly to users, regardless of their location.
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Deployment & Demo
+Currently, this project is in **Development Mode**. 
+
+* **Live Status:** The production server is not hosted 24/7 to manage cloud costs. 
+* **How to View:** To see the full functionality, please follow the **Local Installation** steps below.
+* **Preview:** [Insert Link to a YouTube Video or a GIF here] — *Watch this quick preview to see Craftix in action!*
