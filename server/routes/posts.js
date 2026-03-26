@@ -7,7 +7,7 @@ const multer = require("multer");
 const path = require("path");
 const { S3Client } = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
-const upload = require('../middleware/upload');
+const upload = require("../middleware/upload");
 //saving files.
 
 //Making new post.
@@ -19,10 +19,18 @@ router.post("/", auth, upload.single("media"), async (req, res, next) => {
     };
 
     if (req.file) {
-      postData.mediaUrl =req.file.location;
+      // בדיקה האם אנחנו ב-Production (AWS) או ב-Development (Local)
+      const isProduction = process.env.NODE_ENV === "production";
+
+      postData.mediaUrl = isProduction
+        ? req.file.location // ב-AWS: הקישור המלא ל-S3
+        : `/uploads/posts/${req.file.filename}`; // במחשב: נתיב יחסי לתיקייה המקומית
+
       postData.mediaType = req.file.mimetype.startsWith("video")
         ? "video"
         : "image";
+
+      console.log("Saving mediaUrl:", postData.mediaUrl); // להדפסה בטרמינל כדי לוודא שזה עובד
     }
 
     if (
@@ -323,8 +331,8 @@ router.post(
       });
 
       if (req.file) {
-	sharePost.mediaUrl = req.file.location;
-	sharePost.mediaType = "image";
+        sharePost.mediaUrl = req.file.location;
+        sharePost.mediaType = "image";
       }
 
       const savedPost = await sharePost.save();

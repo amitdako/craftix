@@ -34,9 +34,23 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     Array.isArray(currentUser?.savedPosts) &&
     currentUser.savedPosts.some((item) => (item._id || item) === post._id);
 
-  const getImageUrl = (path) =>
-    path?.startsWith("http") ? path :path;
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return ""; // אם אין תמונה, אל תחזיר כלום
 
+    // אם זו תמונה מ-AWS (מתחילה ב-http), תחזיר אותה כמו שהיא
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+
+    // אם זו תמונה מקומית, תוסיף את הכתובת של שרת ה-Node.js שלך
+    // וודא שיש קו נטוי (/) בין הכתובת לנתיב הקובץ
+    const baseUrl = "http://localhost:5000";
+    const formattedPath = imagePath.startsWith("/")
+      ? imagePath
+      : `/${imagePath}`;
+
+    return `${baseUrl}${formattedPath}`;
+  };
   // date and time of post.
   const formatDateTime = (date) =>
     new Date(date).toLocaleString(currentLang === "he" ? "he-IL" : "en-US", {
@@ -154,6 +168,7 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       }
     }
   };
+  console.log("Full Post Data:", post); // תבדוק איך קוראים לשדה של התמונה ב-DB
 
   return (
     <div className="post-card" style={s.cardStyle}>
