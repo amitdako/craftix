@@ -52,7 +52,7 @@ const CommentSection = ({
             <div style={s.avatarContainer}>
               {comment.author?.profileImage ? (
                 <img
-                  src={`http://localhost:5000${comment.author.profileImage}`}
+                  src={comment.author.profileImage}
                   alt=""
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />

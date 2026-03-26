@@ -9,7 +9,7 @@ const api = axios.create({
   baseURL:
     import.meta.env.MODE === "development"
       ? "http://localhost:5000/api"
-      : "https://craftix-backend.onrender.com/api",
+      : "/api",
 });
 
 // Automatically add the JWT token to every request if it exists in local storage

@@ -35,7 +35,7 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     currentUser.savedPosts.some((item) => (item._id || item) === post._id);
 
   const getImageUrl = (path) =>
-    path?.startsWith("http") ? path : `http://localhost:5000${path}`;
+    path?.startsWith("http") ? path :path;
 
   // date and time of post.
   const formatDateTime = (date) =>

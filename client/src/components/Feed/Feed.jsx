@@ -48,7 +48,8 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
       confirmButtonText: t.deleteBtn,
       cancelButtonText: t.cancelBtn,
       reverseButtons: currentLang === "he", 
-    //If he decided to delete
+    });
+	//If he decided to delete
     if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
@@ -165,7 +166,7 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
                 <img
                   src={
                     user.profileImage
-                      ? `http://localhost:5000${user.profileImage}`
+		      ? user.profileImage
                       : "https://via.placeholder.com/150"
                   }
                   alt={user.displayName}

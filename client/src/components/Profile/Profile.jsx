@@ -129,7 +129,7 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
         <div style={S.avatarContainerStyle}>
           {profileUser?.profileImage ? (
             <img
-              src={`http://localhost:5000${profileUser.profileImage}`}
+              src={profileUser.profileImage}
               alt="Profile"
               style={S.imgStyle}
               key={profileUser.profileImage}

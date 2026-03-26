@@ -5,18 +5,10 @@ const auth = require("../middleware/auth");
 const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
-
+const { S3Client } = require("@aws-sdk/client-s3");
+const multerS3 = require("multer-s3");
+const upload = require('../middleware/upload');
 //saving files.
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + path.extname(file.originalname)),
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // מגבלה של 50MB
-});
 
 //Making new post.
 router.post("/", auth, upload.single("media"), async (req, res, next) => {
@@ -27,7 +19,7 @@ router.post("/", auth, upload.single("media"), async (req, res, next) => {
     };
 
     if (req.file) {
-      postData.mediaUrl = `/uploads/${req.file.filename}`;
+      postData.mediaUrl =req.file.location;
       postData.mediaType = req.file.mimetype.startsWith("video")
         ? "video"
         : "image";
@@ -331,8 +323,8 @@ router.post(
       });
 
       if (req.file) {
-        sharePost.mediaUrl = `/uploads/${req.file.filename}`;
-        sharePost.mediaType = "image";
+	sharePost.mediaUrl = req.file.location;
+	sharePost.mediaType = "image";
       }
 
       const savedPost = await sharePost.save();
