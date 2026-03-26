@@ -34,7 +34,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
             <div style={S.avatarContainerStyle}>
               {user.profileImage ? (
                 <img
-                  src={`http://localhost:5000${user.profileImage}`}
+                  src={user.profileImage}
                   alt="Me"
                   style={S.avatarImgStyle}
                 />

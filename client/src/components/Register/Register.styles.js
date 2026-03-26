@@ -20,7 +20,7 @@ export const formStyle = {
   display: "flex",
   flexDirection: "column",
   gap: "12px", 
-
+};
 export const inputStyle = {
   width: "100%",
   padding: "12px",

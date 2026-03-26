@@ -41,7 +41,7 @@ const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
       : "";
 
   const getImageUrl = (path) =>
-    path?.startsWith("http") ? path : `http://localhost:5000${path}`;
+    path?.startsWith("http") ? path :path;
 
   useEffect(() => {
     const fetchPost = async () => {

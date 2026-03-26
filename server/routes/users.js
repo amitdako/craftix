@@ -3,25 +3,10 @@ const router = express.Router();
 const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
 const auth = require("../middleware/auth");
-
-//creating new folder if there isn't
-const uploadDir = "uploads/";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
-//we will save in this folder with this name.
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + path.extname(file.originalname)),
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+const { S3Client } = require("@aws-sdk/client-s3");
+const multerS3 = require("multer-s3");
+const upload = require('../middleware/upload');
 
 // Register
 router.post("/register", async (req, res, next) => {
@@ -106,7 +91,7 @@ router.post(
     try {
       if (!req.file) return res.status(400).json({ message: "No file" });
       const user = await User.findById(req.user.id);
-      user.profileImage = `/uploads/${req.file.filename}`;
+      user.profileImage = req.file.location;
       await user.save();
       res.json({ message: "Updated", profileImage: user.profileImage });
     } catch (err) {
