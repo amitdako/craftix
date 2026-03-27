@@ -33,6 +33,8 @@ export const description = {
   fontSize: "1rem",
   whiteSpace: "pre-wrap",
   padding: "0 15px 15px 15px",
+  textAlign: "start",
+  unicodeBidi: "plaintext",
 };
 
 export const madeThisButton = {
@@ -78,4 +80,35 @@ export const footerWrapper = {
   alignItems: "center",
   marginTop: "10px",
   direction: "ltr",
+};
+export const sectionTitleStyle = {
+  display: "block",
+  fontSize: "1rem",
+  fontWeight: "bold",
+  color: "#65676b",
+  marginBottom: "10px",
+};
+
+export const badgeContainerStyle = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "10px",
+  marginBottom: "15px",
+};
+
+export const badgeStyle = {
+  backgroundColor: "#f0f2f5",
+  color: "#1c1e21",
+  padding: "6px 14px",
+  borderRadius: "20px",
+  fontSize: "0.9rem",
+  fontWeight: "500",
+  border: "1px solid #ebedf0",
+};
+
+export const separatorStyle = {
+  height: "1px",
+  backgroundColor: "#eee",
+  width: "100%",
+  border: "none",
 };

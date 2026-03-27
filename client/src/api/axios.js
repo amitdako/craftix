@@ -6,10 +6,7 @@ import axios from "axios";
  * In development, it falls back to localhost:5000.
  */
 const api = axios.create({
-  baseURL:
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5000/api"
-      : "/api",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // Automatically add the JWT token to every request if it exists in local storage

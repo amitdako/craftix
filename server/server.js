@@ -5,9 +5,21 @@ require("dotenv").config();
 const path = require("path");
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173", //localhost
+  "http://craftix-files-amit-2024.s3-website.eu-central-1.amazonaws.com", // s3
+];
 app.use(
   cors({
-    origin: true,
+    origin: function (origin, callback) {
+      const isAllowed = allowedOrigins.indexOf(origin) !== -1;
+      const isNonBrowser = !origin;
+      if (isAllowed || isNonBrowser) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS Policy: Access Denied"), false);
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

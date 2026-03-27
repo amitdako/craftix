@@ -168,7 +168,6 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       }
     }
   };
-  console.log("Full Post Data:", post); // תבדוק איך קוראים לשדה של התמונה ב-DB
 
   return (
     <div className="post-card" style={s.cardStyle}>
@@ -189,6 +188,8 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
         mediaType={post.mediaType}
         getImageUrl={getImageUrl}
         onNavigate={() => navigate(`/post/${post._id}`)}
+        tools={post.projectDetails?.tools}
+        materials={post.projectDetails?.materials}
       />
 
       {post.postType === "implementation" && (

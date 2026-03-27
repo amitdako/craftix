@@ -140,5 +140,30 @@ export const secondaryBtnStyle = {
   cursor: "pointer",
   fontSize: "1.3rem",
 };
+export const sectionTitleStyle = {
+  display: "block",
+  fontSize: "0.9rem",
+  fontWeight: "bold",
+  color: "#65676b",
+  marginBottom: "8px",
+};
+
+export const badgeContainerStyle = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "8px",
+  marginBottom: "10px",
+  justifyContent: "flex-start",
+};
+
+export const badgeStyle = {
+  backgroundColor: "#f0f2f5",
+  color: "#1c1e21",
+  padding: "5px 12px",
+  borderRadius: "16px",
+  fontSize: "0.85rem",
+  fontWeight: "500",
+  border: "1px solid #ebedf0",
+};
 
 export const deleteBtnStyle = { ...secondaryBtnStyle, opacity: 0.7 };

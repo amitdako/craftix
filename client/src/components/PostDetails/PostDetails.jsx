@@ -40,8 +40,7 @@ const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
         })
       : "";
 
-  const getImageUrl = (path) =>
-    path?.startsWith("http") ? path :path;
+  const getImageUrl = (path) => (path?.startsWith("http") ? path : path);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -230,9 +229,40 @@ const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
 
         <div style={{ paddingTop: "15px", textAlign: "inherit" }}>
           {post.title && <h2 style={S.title}>{post.title}</h2>}
-          <p style={S.description}>{post.content}</p>
         </div>
 
+        <div style={{ padding: "0 15px 20px 15px" }}>
+          {post.projectDetails?.tools?.length > 0 && (
+            <div style={{ marginTop: "15px" }}>
+              <span style={S.sectionTitleStyle} dir="auto">
+                ⚒️ Tools:
+              </span>
+              <div style={S.badgeContainerStyle} dir="auto">
+                {post.projectDetails.tools.map((tool, index) => (
+                  <span key={index} style={S.badgeStyle}>
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {post.projectDetails?.materials?.length > 0 && (
+            <div style={{ marginTop: "15px" }}>
+              <span style={S.sectionTitleStyle} dir="auto">
+                📦 Materials:
+              </span>
+              <div style={S.badgeContainerStyle} dir="auto">
+                {post.projectDetails.materials.map((item, index) => (
+                  <span key={index} style={S.badgeStyle}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          <p style={S.description}>{post.content}</p>
+        </div>
         <SharedBox
           parentPost={post.parentPost}
           getImageUrl={getImageUrl}
