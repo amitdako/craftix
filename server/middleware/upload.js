@@ -10,7 +10,6 @@ const storage = isProduction
   ? multerS3({
       s3: s3,
       bucket: "craftix-files-amit-2024",
-      acl: "public-read",
       contentType: multerS3.AUTO_CONTENT_TYPE,
       key: function (req, file, cb) {
         const folder = req.baseUrl.includes('users') ? 'profiles' : 'posts';
