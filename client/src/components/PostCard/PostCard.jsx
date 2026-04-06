@@ -225,6 +225,10 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
               e.stopPropagation();
               onDelete(post._id);
             }}
+            onEdit={(e) => {
+              e.stopPropagation();
+              navigate(`/edit-post/${post._id}`);
+            }}
             commentsCount={allComments.length}
           />
         </>
@@ -253,6 +257,10 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
             onDelete={(e) => {
               e.stopPropagation();
               onDelete(post._id);
+            }}
+            onEdit={(e) => {
+              e.stopPropagation();
+              navigate(`/edit-post/${post._id}`);
             }}
           />
           {likes.length > 0 && (

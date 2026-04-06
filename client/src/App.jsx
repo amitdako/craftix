@@ -17,6 +17,7 @@ import Profile from "./components/Profile/Profile";
 import PostDetails from "./components/PostDetails/PostDetails"; // הייבוא החדש
 import Navbar from "./components/Navbar/Navbar";
 import logo from "./assets/logo.png";
+import EditPost from "./components/EditPost/EditPost";
 
 function AppContent() {
   const [user, setUser] = useState(() => {
@@ -93,7 +94,10 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/edit-post/:id"
+          element={<EditPost currentLang={language} />}
+        />
         {/* שימוש עקבי ב-updateUser */}
         <Route
           path="/profile"

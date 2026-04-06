@@ -275,7 +275,56 @@ router.get("/user/:userId", async (req, res, next) => {
     next(err);
   }
 });
+//Edit post
+router.put("/:id", auth, upload.single("media"), async (req, res, next) => {
+  try {
+    const postId = req.params.id;
 
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if (post.author.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to edit this post" });
+    }
+
+    post.title = req.body.title || post.title;
+    post.content = req.body.content || post.content;
+    post.category = req.body.category || post.category;
+    post.postType = req.body.postType || post.postType;
+
+    if (
+      req.body.projectDetails &&
+      typeof req.body.projectDetails === "string"
+    ) {
+      post.projectDetails = JSON.parse(req.body.projectDetails);
+    }
+
+    if (req.file) {
+      const isProduction = process.env.NODE_ENV === "production";
+      post.mediaUrl = isProduction
+        ? req.file.location
+        : `/uploads/posts/${req.file.filename}`;
+
+      post.mediaType = req.file.mimetype.startsWith("video")
+        ? "video"
+        : "image";
+    } else if (req.body.removeMedia === "true") {
+      // המשתמש בחר למחוק את המדיה הקיימת מבלי להעלות חדשה
+      post.mediaUrl = null;
+      post.mediaType = null;
+    }
+
+    const updatedPost = await post.save();
+    res.json(updatedPost);
+  } catch (err) {
+    console.error("Error updating post:", err);
+    next(err);
+  }
+});
 // saving/unsaving post
 router.post("/save/:id", auth, async (req, res) => {
   try {

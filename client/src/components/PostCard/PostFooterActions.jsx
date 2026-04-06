@@ -2,6 +2,7 @@ import React from "react";
 import * as s from "./PostCard.styles";
 import { translations } from "../../translations";
 
+// אייקונים נקיים במידות שוות (24x24)
 const HeartOutline = () => (
   <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
     <path
@@ -57,6 +58,22 @@ const TrashIcon = () => (
     ></path>
   </svg>
 );
+// הוספתי אייקון עריכה נקי
+const EditIcon = () => (
+  <svg
+    fill="none"
+    height="24"
+    viewBox="0 0 24 24"
+    width="24"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+  </svg>
+);
 
 const PostFooterActions = ({
   currentLang,
@@ -70,6 +87,7 @@ const PostFooterActions = ({
   onMadeThisClick,
   onSave,
   onDelete,
+  onEdit,
   commentsCount,
 }) => {
   const t = translations[currentLang] || translations.en;
@@ -81,7 +99,6 @@ const PostFooterActions = ({
           {isLiked ? <HeartFilled /> : <HeartOutline />}
         </button>
 
-        {/* האייקון של התגובות עכשיו מקבל מספר אם יש תגובות */}
         <button onClick={onCommentToggle} style={s.iconBtnStyle}>
           <CommentIcon />
           {commentsCount > 0 && (
@@ -120,14 +137,24 @@ const PostFooterActions = ({
           {isSaved ? <SaveFilled /> : <SaveOutline />}
         </button>
 
+        {/* כפתורי עריכה ומחיקה יופיעו רק לבעל הפוסט */}
         {isOwner && (
-          <button
-            onClick={onDelete}
-            style={{ ...s.iconBtnStyle, color: "#ed4956" }}
-            title={t.deleteTitle}
-          >
-            <TrashIcon />
-          </button>
+          <>
+            <button
+              onClick={onEdit}
+              style={s.iconBtnStyle}
+              title={t.edit || "Edit"}
+            >
+              <EditIcon />
+            </button>
+            <button
+              onClick={onDelete}
+              style={{ ...s.iconBtnStyle, color: "#ed4956" }}
+              title={t.deleteTitle}
+            >
+              <TrashIcon />
+            </button>
+          </>
         )}
       </div>
     </div>

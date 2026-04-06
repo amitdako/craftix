@@ -6,7 +6,6 @@ const PostContent = ({
   currentLang,
   title,
   content,
-  authorName,
   onNavigate,
   tools,
   materials,
@@ -18,13 +17,27 @@ const PostContent = ({
       onClick={onNavigate}
       style={{ cursor: "pointer", padding: "0 14px 14px 14px" }}
     >
-      {/* שם המשתמש, כותרת, ותוכן רציף */}
-      <div style={s.contentTextStyle} dir="auto">
-        <span style={{ fontWeight: "600", marginInlineEnd: "6px" }}>
-          {authorName}
-        </span>
-        {title && <span style={{ fontWeight: "500" }}>{title} - </span>}
-        <span>{content}</span>
+      {/* אזור הכותרת - מופיע רק אם באמת יש כותרת (פרויקט) */}
+      {title && (
+        <div style={{ marginBottom: "6px" }} dir="auto">
+          <span
+            style={{ fontWeight: "600", color: "#262626", fontSize: "15px" }}
+          >
+            {title}
+          </span>
+        </div>
+      )}
+
+      {/* אזור תוכן הפוסט - שומר על ירידות שורה (Enter) שהוקלדו במקור */}
+      <div
+        style={{
+          ...s.contentTextStyle,
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+        }}
+        dir="auto"
+      >
+        {content}
       </div>
 
       {/* כלים - כתגיות מעוצבות ונקיות */}

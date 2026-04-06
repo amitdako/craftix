@@ -127,6 +127,8 @@ export const contentTextStyle = {
   color: "#262626",
   fontSize: "14px",
   lineHeight: "1.5",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-word",
 };
 export const sectionTitleStyle = {
   display: "block",
