@@ -10,101 +10,113 @@ const PostImplementationBox = ({
   if (!parentPost) return null;
 
   const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   return (
     <div
       style={{
-        margin: "15px",
-        padding: "12px",
-        border: "1px solid #e0e0e0",
-        borderRadius: "10px",
-        backgroundColor: "#f9f9f9",
-        textAlign: "inherit",
+        margin: "10px 14px 15px 14px", // מיושר בול עם הטקסט של הפוסט
+        border: "1px solid #dbdbdb",
+        borderRadius: "8px",
+        backgroundColor: "#ffffff",
         cursor: "pointer",
+        display: "flex",
+        alignItems: "stretch", // מותח את התמונה לכל הגובה
+        overflow: "hidden",
+        direction: isHe ? "rtl" : "ltr", // מתהפך אוטומטית לפי השפה
       }}
       onClick={onNavigate}
     >
-      {/* Header: User Info */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          marginBottom: "12px",
-        }}
-      >
-        {/* Profile picture */}
+      {/* צד אחד: התמונה של הפרויקט המקורי */}
+      {parentPost.mediaUrl && (
         <div
           style={{
-            width: "28px",
-            height: "28px",
-            borderRadius: "50%",
-            backgroundColor: "#007bff",
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: "bold",
-            fontSize: "0.75rem",
-            overflow: "hidden",
-            border: "1px solid #eee",
+            width: "85px",
             flexShrink: 0,
+            borderInlineEnd: "1px solid #dbdbdb", // שם קו הפרדה בצד הנכון תמיד
+            backgroundColor: "#fafafa",
           }}
         >
-          {parentPost.author?.profileImage ? (
-            <img
-              src={getImageUrl(parentPost.author.profileImage)}
-              alt=""
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            parentPost.author?.displayName?.[0] || "U"
-          )}
-        </div>
-
-        <span
-          style={{
-            fontSize: "0.85rem",
-            fontWeight: "bold",
-            color: "#555",
-          }}
-        >
-          {parentPost.author?.displayName || t.originalCreator}
-        </span>
-      </div>
-
-      {/* Project info: Image and title */}
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-        }}
-      >
-        {parentPost.mediaUrl && (
           <img
             src={getImageUrl(parentPost.mediaUrl)}
             style={{
-              width: "70px",
-              height: "50px",
+              width: "100%",
+              height: "100%",
               objectFit: "cover",
-              borderRadius: "6px",
             }}
             alt=""
           />
-        )}
-        <div style={{ flex: 1 }}>
-          <h4
+        </div>
+      )}
+
+      {/* צד שני: טקסט (יוצר וכותרת) */}
+      <div
+        style={{
+          padding: "12px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          flex: 1,
+        }}
+      >
+        {/* שורה עליונה: תמונת פרופיל קטנה ושם היוצר */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            marginBottom: "4px",
+          }}
+        >
+          <div
             style={{
-              margin: "0",
-              fontSize: "0.9rem",
-              color: "#333",
-              fontWeight: "600",
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              backgroundColor: "#efefef",
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "8px",
+              fontWeight: "bold",
+              color: "#8e8e8e",
+              border: "1px solid #dbdbdb",
             }}
           >
-            {parentPost.title}
-          </h4>
+            {parentPost.author?.profileImage ? (
+              <img
+                src={getImageUrl(parentPost.author.profileImage)}
+                alt=""
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              parentPost.author?.displayName?.[0] || "U"
+            )}
+          </div>
+          <span
+            style={{ fontSize: "12px", color: "#8e8e8e", fontWeight: "500" }}
+          >
+            {t.originalCreator}: {parentPost.author?.displayName || "User"}
+          </span>
         </div>
+
+        {/* שורה תחתונה: כותרת הפרויקט */}
+        <h4
+          style={{
+            margin: "0",
+            fontSize: "14px",
+            color: "#262626",
+            fontWeight: "600",
+            lineHeight: "1.3",
+            display: "-webkit-box",
+            WebkitLineClamp: 2, // חותך יפה עם 3 נקודות אם הטקסט ארוך מדי
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {parentPost.title}
+        </h4>
       </div>
     </div>
   );

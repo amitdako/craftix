@@ -7,22 +7,30 @@ import * as S from "./Profile.styles";
 import Swal from "sweetalert2";
 
 const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
-  const t = translations[currentLang];
-  const { id } = useParams(); //taking the id from the url.
+  const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
+  const { id } = useParams();
   const [profileUser, setProfileUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
   const [profileSearch, setProfileSearch] = useState("");
-  const fileInputRef = useRef(null); //make direct contact to Dom element.
+  const fileInputRef = useRef(null);
 
-  const targetId = id || currentUser?.id;
-  const isMyProfile = !id || id === currentUser?.id;
+  const targetId = id || currentUser?.id || currentUser?._id;
+  const isMyProfile = !id || id === (currentUser?.id || currentUser?._id);
 
-  //Fetch User Profile Info
+  // פונקציית העזר לתמונות שהייתה חסרה בפרופיל
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    if (imagePath.startsWith("http")) return imagePath;
+    const baseUrl = "http://localhost:5000";
+    return `${baseUrl}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`;
+  };
+
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!targetId) return; //if there is no user.
+      if (!targetId) return;
       try {
         setLoading(true);
         const userRes = await api.get(`/users/${targetId}`);
@@ -36,7 +44,6 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
     fetchUserInfo();
   }, [targetId]);
 
-  // Fetch User Posts with Debounce Search
   useEffect(() => {
     const fetchProfilePosts = async () => {
       if (!targetId) return;
@@ -59,7 +66,7 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [targetId, profileSearch]);
-  //changing profile picture
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -72,7 +79,8 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      onUpdateUser({ profileImage: response.data.profileImage });
+      if (onUpdateUser)
+        onUpdateUser({ profileImage: response.data.profileImage });
       setProfileUser((prev) => ({
         ...prev,
         profileImage: response.data.profileImage,
@@ -81,35 +89,36 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
       alert("Failed to upload image.");
     }
   };
-  //deleting post.
+
   const handleDelete = async (postId) => {
     const result = await Swal.fire({
-      title: "Are you sure you want to continue?",
-      text: "Deleting this post is permanent and cannot be undone.",
+      title: t.deleteConfirmTitle || "Are you sure?",
+      text: t.deleteConfirmText || "Deleting this post is permanent.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757",
-      cancelButtonColor: "#65676b",
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+      confirmButtonColor: "#ed4956",
+      cancelButtonColor: "#dbdbdb",
+      confirmButtonText: t.deleteBtn || "Delete",
+      cancelButtonText: t.cancelBtn || "Cancel",
+      reverseButtons: isHe,
     });
-    //If he decided to delete
+
     if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
         setPosts(posts.filter((p) => p._id !== postId));
       } catch (err) {
-        Swal.fire("Error in deleting", "error");
+        Swal.fire(t.errorDeleting || "Error", "", "error");
       }
     }
   };
-  //saving post.
+
   const handleSave = async (postId) => {
     try {
       const response = await api.post(`/posts/save/${postId}`);
-      if (response.data?.savedPosts)
+      if (response.data?.savedPosts && onUpdateUser) {
         onUpdateUser({ savedPosts: response.data.savedPosts });
+      }
     } catch (err) {
       console.error("Save error:", err);
     }
@@ -117,48 +126,48 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
 
   if (loading)
     return (
-      <p style={{ textAlign: "center", marginTop: "50px" }}>
-        Loading profile...
+      <p style={{ textAlign: "center", marginTop: "50px", color: "#8e8e8e" }}>
+        {isHe ? "טוען פרופיל..." : "Loading profile..."}
       </p>
     );
 
   return (
-    <div style={S.containerStyle}>
-      {/* Header */}
+    <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
+      {/* Header - Instagram Style */}
       <div style={S.headerStyle}>
-        <div style={S.avatarContainerStyle}>
-          {profileUser?.profileImage ? (
-            <img
-              src={profileUser.profileImage}
-              alt="Profile"
-              style={S.imgStyle}
-              key={profileUser.profileImage}
-            />
-          ) : (
-            <div style={S.fallbackAvatarStyle}>
-              {profileUser?.displayName?.[0] || "U"}
-            </div>
-          )}
+        <div style={S.avatarRingStyle}>
+          <div style={S.avatarContainerStyle}>
+            {profileUser?.profileImage ? (
+              <img
+                src={getImageUrl(profileUser.profileImage)}
+                alt="Profile"
+                style={S.imgStyle}
+                key={profileUser.profileImage}
+              />
+            ) : (
+              <div style={S.fallbackAvatarStyle}>
+                {profileUser?.displayName?.[0] || "U"}
+              </div>
+            )}
+          </div>
         </div>
 
         <div style={{ flex: 1 }}>
-          <h2 style={{ margin: "0", color: "#1c1e21" }}>
+          <h2 style={S.profileNameStyle}>
             {profileUser?.displayName || profileUser?.fullName}
           </h2>
-          <p style={{ color: "#65676b", margin: "5px 0" }}>
-            {profileUser?.email}
-          </p>
+          <p style={S.profileEmailStyle}>{profileUser?.email}</p>
 
           {isMyProfile && (
-            <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
+            <div style={S.actionButtonsWrapper}>
               <Link to="/create-post" style={S.actionButtonStyle}>
-                ➕ {t.newProject}
+                {t.newProject}
               </Link>
               <button
                 onClick={() => fileInputRef.current.click()}
                 style={S.editButtonStyle}
               >
-                📷 {t.changePhoto}
+                {t.changePhoto}
               </button>
               <input
                 type="file"
@@ -173,63 +182,63 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
       </div>
 
       {/* Internal Search */}
-      <div style={{ marginBottom: "30px" }}>
+      <div style={S.searchWrapperStyle}>
         <input
           type="text"
-          placeholder={`🔍 ${t.searchPrefix} ${profileUser?.displayName || "user"}${t.searchSuffix}`}
+          placeholder={`${t.searchPrefix} ${profileUser?.displayName || "user"}${t.searchSuffix}`}
           value={profileSearch}
           onChange={(e) => setProfileSearch(e.target.value)}
           style={S.profileSearchInputStyle}
         />
       </div>
-      <h3
-        style={{
-          ...S.sectionTitleStyle,
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-        }}
-      >
+
+      {/* Section Title */}
+      <h3 style={S.sectionTitleStyle}>
         {isMyProfile
           ? `${t.myprojPrefix}${profileUser?.displayName || "User"}${t.myprojSuffix}`
-          : `${profileUser?.displayName || "User"}${currentLang === "en" ? "'s Projects" : " - פרויקטים"}`}
-
-        <span dir="ltr">({posts.length})</span>
+          : `${profileUser?.displayName || "User"}${isHe ? " - פרויקטים" : "'s Projects"}`}
+        <span
+          style={{
+            color: "#8e8e8e",
+            marginInlineStart: "6px",
+            fontSize: "14px",
+            fontWeight: "400",
+          }}
+        >
+          ({posts.length})
+        </span>
 
         {postsLoading && (
-          <span
-            style={{
-              fontSize: "12px",
-              marginInlineStart: "10px",
-              color: "#999",
-            }}
-          >
-            {currentLang === "en" ? "Updating..." : "מעדכן..."}
+          <span style={S.loadingTextStyle}>
+            {isHe ? "מעדכן..." : "Updating..."}
           </span>
         )}
       </h3>
 
+      {/* Posts List / Empty State */}
       {posts.length === 0 ? (
         <div style={S.emptyStateStyle}>
           <p>
             {profileSearch
-              ? "No results match your search."
-              : "No projects shared yet."}
+              ? isHe
+                ? "לא נמצאו פרויקטים תואמים לחיפוש."
+                : "No results match your search."
+              : isHe
+                ? "טרם שותפו פרויקטים."
+                : "No projects shared yet."}
           </p>
           {isMyProfile && !profileSearch && (
-            <Link
-              to="/create-post"
-              style={{ color: "#007bff", fontWeight: "bold" }}
-            >
-              Post your first project
+            <Link to="/create-post" style={S.emptyStateLinkStyle}>
+              {isHe ? "פרסם את הפרויקט הראשון שלך" : "Post your first project"}
             </Link>
           )}
         </div>
       ) : (
-        <div style={{ display: "grid", gap: "25px" }}>
+        <div style={S.postsGridStyle}>
           {posts.map((post) => (
             <PostCard
               key={post._id}
+              currentLang={currentLang} // הוסף כדי שהתרגומים יעבדו!
               post={post}
               currentUser={currentUser}
               onDelete={handleDelete}

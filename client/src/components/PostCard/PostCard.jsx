@@ -34,24 +34,15 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     Array.isArray(currentUser?.savedPosts) &&
     currentUser.savedPosts.some((item) => (item._id || item) === post._id);
 
+  const isGeneralPost = post.postType === "general";
+
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return ""; // אם אין תמונה, אל תחזיר כלום
-
-    // אם זו תמונה מ-AWS (מתחילה ב-http), תחזיר אותה כמו שהיא
-    if (imagePath.startsWith("http")) {
-      return imagePath;
-    }
-
-    // אם זו תמונה מקומית, תוסיף את הכתובת של שרת ה-Node.js שלך
-    // וודא שיש קו נטוי (/) בין הכתובת לנתיב הקובץ
+    if (!imagePath) return "";
+    if (imagePath.startsWith("http")) return imagePath;
     const baseUrl = "http://localhost:5000";
-    const formattedPath = imagePath.startsWith("/")
-      ? imagePath
-      : `/${imagePath}`;
-
-    return `${baseUrl}${formattedPath}`;
+    return `${baseUrl}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`;
   };
-  // date and time of post.
+
   const formatDateTime = (date) =>
     new Date(date).toLocaleString(currentLang === "he" ? "he-IL" : "en-US", {
       day: "2-digit",
@@ -61,7 +52,6 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       minute: "2-digit",
     });
 
-  // Adding file.
   const handleMadeThisFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -70,14 +60,12 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  // remove picture that i added before posting.
   const handleRemoveImage = () => {
     setMadeThisMedia(null);
-    if (madeThisPreview) URL.revokeObjectURL(madeThisPreview); // cleaning memory
+    if (madeThisPreview) URL.revokeObjectURL(madeThisPreview);
     setMadeThisPreview(null);
   };
 
-  // Make like.
   const handleLike = async (e) => {
     e.stopPropagation();
     try {
@@ -88,7 +76,6 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  // Submit i made it.
   const handleSubmitMadeThis = async (e) => {
     if (e) e.stopPropagation();
     if (!madeThisText.trim()) return;
@@ -100,9 +87,8 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       data.append("parentPost", post._id);
       data.append("category", post.category || "General");
 
-      if (madeThisMedia) {
-        data.append("media", madeThisMedia);
-      }
+      if (madeThisMedia) data.append("media", madeThisMedia);
+
       await api.post("/posts", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -112,7 +98,6 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  // add comment
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -127,7 +112,6 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  // make like to comment.
   const handleLikeComment = async (commentId) => {
     try {
       const response = await api.post(
@@ -139,15 +123,14 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
     }
   };
 
-  // delete comment.
   const handleDeleteComment = async (commentId) => {
     const result = await Swal.fire({
       title: t.commentDeleteConfirmTitle,
       text: t.commentDeleteConfirmText,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757",
-      cancelButtonColor: "#65676b",
+      confirmButtonColor: "#ed4956",
+      cancelButtonColor: "#dbdbdb",
       confirmButtonText: t.deleteBtn,
       cancelButtonText: t.cancelBtn,
       reverseButtons: currentLang === "he",
@@ -159,18 +142,17 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
         );
         setAllComments(response.data);
       } catch (err) {
-        console.error("Error deleting comment:", err);
-        Swal.fire({
-          icon: "error",
-          title: t.oops,
-          text: t.tryAgainLater,
-        });
+        Swal.fire({ icon: "error", title: t.oops, text: t.tryAgainLater });
       }
     }
   };
 
   return (
-    <div className="post-card" style={s.cardStyle}>
+    <div
+      className="post-card"
+      style={s.cardStyle}
+      dir={currentLang === "he" ? "rtl" : "ltr"}
+    >
       <PostHeader
         currentLang={currentLang}
         author={post.author}
@@ -180,57 +162,127 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
         formatDateTime={formatDateTime}
       />
 
-      <PostContent
-        currentLang={currentLang}
-        title={post.title}
-        content={post.content}
-        mediaUrl={post.mediaUrl}
-        mediaType={post.mediaType}
-        getImageUrl={getImageUrl}
-        onNavigate={() => navigate(`/post/${post._id}`)}
-        tools={post.projectDetails?.tools}
-        materials={post.projectDetails?.materials}
-      />
-
-      {post.postType === "implementation" && (
-        <PostImplementationBox
-          currentLang={currentLang}
-          parentPost={post.parentPost}
-          getImageUrl={getImageUrl}
-          onNavigate={(e) => {
-            e.stopPropagation();
-            navigate(`/post/${post.parentPost._id || post.parentPost}`);
-          }}
-        />
+      {post.mediaUrl && (
+        <div
+          style={s.mediaWrapperStyle}
+          onClick={() => navigate(`/post/${post._id}`)}
+        >
+          {post.mediaType === "video" ? (
+            <video
+              src={getImageUrl(post.mediaUrl)}
+              controls
+              style={s.mediaContentStyle}
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <img
+              src={getImageUrl(post.mediaUrl)}
+              style={s.mediaContentStyle}
+              alt=""
+            />
+          )}
+        </div>
       )}
 
-      <PostFooterActions
-        currentLang={currentLang}
-        likesCount={likes.length}
-        isLiked={isLiked}
-        commentsCount={allComments.length}
-        isSaved={isSaved}
-        isOwner={isOwner}
-        postType={post.postType}
-        showMadeThisForm={showMadeThisForm}
-        onLike={handleLike}
-        onCommentToggle={(e) => {
-          e.stopPropagation();
-          setShowComments(!showComments);
-        }}
-        onMadeThisClick={(e) => {
-          e.stopPropagation();
-          setShowMadeThisForm(!showMadeThisForm);
-        }}
-        onSave={(e) => {
-          e.stopPropagation();
-          onSave(post._id);
-        }}
-        onDelete={(e) => {
-          e.stopPropagation();
-          onDelete(post._id);
-        }}
-      />
+      {/* סדר התצוגה משתנה לפי סוג הפוסט */}
+      {isGeneralPost ? (
+        <>
+          <PostContent
+            currentLang={currentLang}
+            title={post.title}
+            content={post.content}
+            authorName={post.author?.displayName}
+            onNavigate={() => navigate(`/post/${post._id}`)}
+            tools={post.projectDetails?.tools}
+            materials={post.projectDetails?.materials}
+          />
+          {likes.length > 0 && (
+            <div style={s.likeCountLabel} dir="auto">
+              {likes.length} {t.likes}
+            </div>
+          )}
+          <PostFooterActions
+            currentLang={currentLang}
+            isLiked={isLiked}
+            isSaved={isSaved}
+            isOwner={isOwner}
+            postType={post.postType}
+            showMadeThisForm={showMadeThisForm}
+            onLike={handleLike}
+            onCommentToggle={(e) => {
+              e.stopPropagation();
+              setShowComments(!showComments);
+            }}
+            onMadeThisClick={(e) => {
+              e.stopPropagation();
+              setShowMadeThisForm(!showMadeThisForm);
+            }}
+            onSave={(e) => {
+              e.stopPropagation();
+              onSave(post._id);
+            }}
+            onDelete={(e) => {
+              e.stopPropagation();
+              onDelete(post._id);
+            }}
+            commentsCount={allComments.length}
+          />
+        </>
+      ) : (
+        <>
+          <PostFooterActions
+            currentLang={currentLang}
+            isLiked={isLiked}
+            isSaved={isSaved}
+            isOwner={isOwner}
+            postType={post.postType}
+            showMadeThisForm={showMadeThisForm}
+            onLike={handleLike}
+            onCommentToggle={(e) => {
+              e.stopPropagation();
+              setShowComments(!showComments);
+            }}
+            onMadeThisClick={(e) => {
+              e.stopPropagation();
+              setShowMadeThisForm(!showMadeThisForm);
+            }}
+            onSave={(e) => {
+              e.stopPropagation();
+              onSave(post._id);
+            }}
+            onDelete={(e) => {
+              e.stopPropagation();
+              onDelete(post._id);
+            }}
+          />
+          {likes.length > 0 && (
+            <div style={s.likeCountLabel} dir="auto">
+              {likes.length} {t.likes}
+            </div>
+          )}
+          <PostContent
+            currentLang={currentLang}
+            title={post.title}
+            content={post.content}
+            authorName={post.author?.displayName}
+            onNavigate={() => navigate(`/post/${post._id}`)}
+            tools={post.projectDetails?.tools}
+            materials={post.projectDetails?.materials}
+          />
+          {post.postType === "implementation" && (
+            <PostImplementationBox
+              currentLang={currentLang}
+              parentPost={post.parentPost}
+              getImageUrl={getImageUrl}
+              onNavigate={(e) => {
+                e.stopPropagation();
+                navigate(`/post/${post.parentPost._id || post.parentPost}`);
+              }}
+              t={t}
+            />
+          )}
+        </>
+      )}
 
       {showMadeThisForm && (
         <ImplementationForm
@@ -249,7 +301,10 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       )}
 
       {showComments && (
-        <div style={{ padding: "15px" }} onClick={(e) => e.stopPropagation()}>
+        <div
+          style={{ padding: "0 14px 15px 14px" }}
+          onClick={(e) => e.stopPropagation()}
+        >
           <CommentSection
             currentLang={currentLang}
             allComments={allComments}

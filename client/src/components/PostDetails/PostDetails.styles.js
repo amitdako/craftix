@@ -2,113 +2,95 @@
 
 export const container = {
   maxWidth: "600px",
-  margin: "20px auto",
-  padding: "0px",
-  backgroundColor: "#fff",
-  borderRadius: "15px",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-  fontFamily: "Arial, sans-serif",
-  overflow: "hidden",
-  border: "1px solid #eee",
+  margin: "0 auto", // יושב בול באמצע כמו בפיד
+  padding: "0",
+  backgroundColor: "#ffffff",
+  borderBottom: "1px solid #dbdbdb", // רק קו תחתון, בלי מסגרת מלאה או צל
+  fontFamily: "inherit",
+  display: "flex",
+  flexDirection: "column",
 };
 
 export const image = {
   width: "100%",
-  maxHeight: "500px",
+  maxHeight: "600px", // תמונה גדולה ומרשימה
   objectFit: "cover",
   display: "block",
 };
 
 export const title = {
-  fontSize: "1.25rem",
-  color: "#1c1e21",
-  margin: "0 0 10px 0",
-  fontWeight: "800",
-  padding: "0 15px",
+  fontSize: "16px",
+  color: "#262626",
+  margin: "0 0 8px 0",
+  fontWeight: "600",
+  lineHeight: "1.3",
 };
 
 export const description = {
   lineHeight: "1.5",
-  color: "#444",
-  fontSize: "1rem",
+  color: "#262626",
+  fontSize: "14px",
   whiteSpace: "pre-wrap",
-  padding: "0 15px 15px 15px",
-  textAlign: "start",
-  unicodeBidi: "plaintext",
-};
-
-export const madeThisButton = {
-  backgroundColor: "#ff4757",
-  color: "white",
-  border: "none",
-  padding: "6px 15px",
-  fontSize: "0.85rem",
-  fontWeight: "bold",
-  borderRadius: "20px",
-  cursor: "pointer",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "5px",
+  margin: "0",
 };
 
 export const loading = {
   textAlign: "center",
-  marginTop: "100px",
-  fontSize: "1.1rem",
-  color: "#666",
+  marginTop: "60px",
+  fontSize: "14px",
+  color: "#8e8e8e",
 };
 
-export const formHeaderWrapper = {
-  display: "flex",
-  alignItems: "center",
-  marginBottom: "15px",
-  gap: "12px",
-  direction: "ltr",
-};
-
-export const avatarStyle = {
-  width: "40px",
-  height: "40px",
-  borderRadius: "50%",
-  overflow: "hidden",
-  flexShrink: 0,
-};
-
-export const footerWrapper = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginTop: "10px",
-  direction: "ltr",
-};
 export const sectionTitleStyle = {
   display: "block",
-  fontSize: "1rem",
-  fontWeight: "bold",
-  color: "#65676b",
-  marginBottom: "10px",
+  fontSize: "13px",
+  fontWeight: "600",
+  color: "#262626",
+  marginBottom: "6px",
 };
 
 export const badgeContainerStyle = {
   display: "flex",
   flexWrap: "wrap",
-  gap: "10px",
-  marginBottom: "15px",
+  gap: "6px",
+  marginBottom: "12px",
 };
 
 export const badgeStyle = {
-  backgroundColor: "#f0f2f5",
-  color: "#1c1e21",
-  padding: "6px 14px",
-  borderRadius: "20px",
-  fontSize: "0.9rem",
-  fontWeight: "500",
-  border: "1px solid #ebedf0",
+  backgroundColor: "#fafafa",
+  color: "#262626",
+  border: "1px solid #dbdbdb",
+  padding: "4px 10px",
+  borderRadius: "6px",
+  fontSize: "13px",
 };
 
-export const separatorStyle = {
-  height: "1px",
-  backgroundColor: "#eee",
-  width: "100%",
+// כפתורים תחתונים
+export const actionBtnStyle = {
+  background: "none",
   border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  gap: "6px",
+  color: "#262626",
+  padding: "0",
 };
+
+export const actionCountStyle = {
+  fontSize: "14px",
+  fontWeight: "600",
+};
+
+export const madeThisButtonStyle = (isOpen) => ({
+  backgroundColor: isOpen ? "#efefef" : "transparent",
+  color: "#262626",
+  border: "1px solid #dbdbdb",
+  padding: "4px 12px",
+  borderRadius: "6px",
+  fontWeight: "600",
+  cursor: "pointer",
+  fontSize: "12px",
+  display: "flex",
+  alignItems: "center",
+});

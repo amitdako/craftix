@@ -7,7 +7,8 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
   const [navSearch, setNavSearch] = useState("");
   const navigate = useNavigate();
 
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -22,7 +23,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
   const handleFormSubmit = (e) => e.preventDefault();
 
   return (
-    <nav style={S.navContainerStyle}>
+    <nav style={{ ...S.navContainerStyle, direction: isHe ? "rtl" : "ltr" }}>
       {/* Left: Logo & User Status */}
       <div style={S.leftSectionStyle}>
         <Link to="/feed" style={{ display: "flex", alignItems: "center" }}>
@@ -44,11 +45,9 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
             </div>
             <div style={S.userActionsStyle}>
               <span>
-                {/* Hey מתחלף להיי */}
                 {t.hey}, <strong>{user.displayName}</strong>
               </span>
               <button onClick={handleLogout} style={S.logoutButtonStyle}>
-                {/* Logout מתחלף להתנתקות */}
                 {t.logout}
               </button>
             </div>
@@ -61,7 +60,6 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
         <form onSubmit={handleFormSubmit} style={S.searchFormStyle}>
           <input
             type="text"
-            // הפלייסהולדר נשלף מהמילון
             placeholder={t.searchPlaceholder}
             value={navSearch}
             onChange={handleInputChange}
@@ -72,18 +70,19 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
 
       {/* Right: Navigation */}
       <div style={S.rightLinksWrapper}>
-        {/* כפתור החלפת שפה */}
+        {/* כפתור החלפת שפה נקי */}
         <button
           onClick={toggleLanguage}
           style={{
-            background: "none",
-            border: "1px solid #ccc",
-            borderRadius: "20px",
-            padding: "4px 12px",
+            background: "transparent",
+            border: "1px solid #dbdbdb",
+            borderRadius: "6px",
+            padding: "4px 10px",
             cursor: "pointer",
-            fontWeight: "bold",
-            color: "#1c1e21",
-            marginRight: "15px",
+            fontWeight: "600",
+            fontSize: "12px",
+            color: "#262626",
+            marginInlineEnd: "10px", // תומך RTL אוטומטית!
           }}
         >
           {currentLang === "en" ? "עברית" : "English"}
@@ -109,7 +108,9 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
             <Link to="/login" style={S.linkStyle}>
               {t.login}
             </Link>
-            <Link to="/register" style={S.linkStyle}>
+            <Link to="/register" style={S.newProjectBtnStyle}>
+              {" "}
+              {/* הרשמה מודגשת כמו כפתור */}
               {t.register}
             </Link>
           </>

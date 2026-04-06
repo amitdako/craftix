@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
-import PostCard from "../PostCard/PostCard"; 
+import PostCard from "../PostCard/PostCard";
 import * as S from "./Feed.styles";
 import { translations } from "../../translations";
 
@@ -18,6 +18,7 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
   const navigate = useNavigate();
 
   const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   const categories = [
     { id: "All", label: t.all },
@@ -43,13 +44,13 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
       text: t.deleteConfirmText,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757", 
-      cancelButtonColor: "#65676b",
+      confirmButtonColor: "#ed4956",
+      cancelButtonColor: "#dbdbdb",
       confirmButtonText: t.deleteBtn,
       cancelButtonText: t.cancelBtn,
-      reverseButtons: currentLang === "he", 
+      reverseButtons: isHe,
     });
-	//If he decided to delete
+    //If he decided to delete
     if (result.isConfirmed) {
       try {
         await api.delete(`/posts/${postId}`);
@@ -107,7 +108,7 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
   }, [selectedCategory, searchTerm]);
 
   return (
-    <div style={S.feedContainerStyle}>
+    <div style={S.feedContainerStyle} dir={isHe ? "rtl" : "ltr"}>
       {/* Category Selection */}
       <div style={S.dropdownWrapperStyle}>
         <button
@@ -117,9 +118,10 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
           <span>
             {selectedCategory === "All"
               ? t.exploreCategories
-              : `📁 ${categories.find((c) => c.id === selectedCategory)?.label || selectedCategory}`}
+              : categories.find((c) => c.id === selectedCategory)?.label ||
+                selectedCategory}
           </span>
-          <span>{isDropdownOpen ? "▲" : "▼"}</span>
+          <span style={{ fontSize: "10px" }}>{isDropdownOpen ? "▲" : "▼"}</span>
         </button>
 
         {isDropdownOpen && (
@@ -142,10 +144,10 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
 
       {/* Search Header */}
       {searchTerm && (
-        <div style={{ marginBottom: "20px" }}>
-          <h3 style={{ fontSize: "16px", color: "#444" }}>
+        <div style={{ marginBottom: "20px", padding: "0 15px" }}>
+          <h3 style={{ fontSize: "16px", color: "#262626", margin: 0 }}>
             {t.resultsFor}{" "}
-            <span style={{ color: "#007bff" }}>"{searchTerm}"</span>
+            <span style={{ color: "#0095f6" }}>"{searchTerm}"</span>
           </h3>
         </div>
       )}
@@ -153,7 +155,14 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
       {/* User Search Results */}
       {searchTerm && userResults.length > 0 && (
         <div style={S.userResultsSectionStyle}>
-          <h4 style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>
+          <h4
+            style={{
+              fontSize: "14px",
+              color: "#8e8e8e",
+              marginBottom: "12px",
+              margin: "0 0 12px 0",
+            }}
+          >
             {t.people}
           </h4>
           <div style={S.userListHorizontalStyle}>
@@ -163,27 +172,32 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
                 style={S.userCardStyle}
                 onClick={() => navigate(`/profile/${user._id}`)}
               >
-                <img
-                  src={
-                    user.profileImage
-		      ? user.profileImage
-                      : "https://via.placeholder.com/150"
-                  }
-                  alt={user.displayName}
-                  style={S.userAvatarStyle}
-                />
+                <div style={S.avatarRingStyle}>
+                  <img
+                    src={
+                      user.profileImage
+                        ? user.profileImage
+                        : "https://via.placeholder.com/150"
+                    }
+                    alt={user.displayName}
+                    style={S.userAvatarStyle}
+                  />
+                </div>
                 <span style={S.userNameStyle}>{user.displayName}</span>
               </div>
             ))}
           </div>
-          <hr style={{ border: "0.5px solid #eee", margin: "20px 0" }} />
         </div>
       )}
 
       {/* Feed Main Content */}
       <main style={{ position: "relative", zIndex: 1 }}>
         {loading ? (
-          <p style={{ textAlign: "center", color: "#666" }}>{t.searching}</p>
+          <p
+            style={{ textAlign: "center", color: "#8e8e8e", marginTop: "20px" }}
+          >
+            {t.searching}
+          </p>
         ) : posts.length > 0 ? (
           <div style={S.postsListStyle}>
             {posts.map((post) => (

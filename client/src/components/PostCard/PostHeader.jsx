@@ -12,14 +12,12 @@ const PostHeader = ({
   formatDateTime,
 }) => {
   const t = translations[currentLang] || translations.en;
-
   const translatedCategory = category
     ? t[category.toLowerCase()] || category
     : null;
 
   return (
     <div style={s.headerWrapper}>
-      {/* left: profile and name group */}
       <div style={s.authorInfoGroup}>
         <div style={s.avatarStyle}>
           {author?.profileImage ? (
@@ -29,28 +27,34 @@ const PostHeader = ({
               alt=""
             />
           ) : (
-            author?.displayName?.[0] || "U"
+            <div
+              style={{
+                ...s.avatarImgStyle,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "12px",
+                color: "#8e8e8e",
+                fontWeight: "bold",
+              }}
+            >
+              {author?.displayName?.[0] || "U"}
+            </div>
           )}
         </div>
 
-        {/* name above the date */}
-        <div style={{ ...s.textStack, textAlign: "inherit" }}>
+        <div style={s.textStack}>
           <Link
             to={`/profile/${author?._id || author}`}
             onClick={(e) => e.stopPropagation()}
-            style={{
-              textDecoration: "none",
-              fontWeight: "bold",
-              color: "#1c1e21",
-            }}
+            style={s.authorNameStyle}
           >
-            {author?.displayName}
+            {author?.displayName || "User"}
           </Link>
           <div style={s.dateStyle}>{formatDateTime(createdAt)}</div>
         </div>
       </div>
 
-      {/* right: category badge */}
       {category && (
         <span style={s.categoryBadgeStyle}>{translatedCategory}</span>
       )}

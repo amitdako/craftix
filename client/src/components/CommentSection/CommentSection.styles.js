@@ -1,118 +1,111 @@
 // CommentSection.styles.js
 
 export const commentSectionContainer = {
-  direction: "ltr",
-  textAlign: "left",
+  padding: "10px 0",
+  display: "flex",
+  flexDirection: "column",
 };
 
 export const titleStyle = {
-  fontSize: "1.1rem",
-  marginBottom: "15px",
-  color: "#65676b",
-  fontWeight: "bold",
+  display: "none", // באינסטגרם אין כותרת "תגובות", זה פשוט מתחיל. אפשר לשנות ל-block אם תרצה.
 };
 
 export const formStyle = {
   display: "flex",
+  alignItems: "center",
   gap: "10px",
   marginBottom: "20px",
+  borderTop: "1px solid #efefef",
+  borderBottom: "1px solid #efefef",
+  padding: "10px 0",
 };
 
 export const inputStyle = {
   flex: 1,
-  padding: "10px 15px",
-  borderRadius: "20px",
-  border: "1px solid #ddd",
+  border: "none",
   outline: "none",
-  fontSize: "0.9rem",
+  fontSize: "14px",
+  color: "#262626",
+  backgroundColor: "transparent",
+  padding: "4px 0",
 };
 
-export const sendBtnStyle = {
-  backgroundColor: "#007bff",
-  color: "white",
+export const sendBtnStyle = (hasText) => ({
+  backgroundColor: "transparent",
+  color: "#0095f6", // כחול אינסטגרם
   border: "none",
-  padding: "8px 18px",
-  borderRadius: "20px",
-  fontWeight: "bold",
-  cursor: "pointer",
-};
+  fontWeight: "600",
+  fontSize: "14px",
+  cursor: hasText ? "pointer" : "default",
+  opacity: hasText ? 1 : 0.5,
+  padding: "0 8px",
+  transition: "opacity 0.2s",
+});
 
 export const commentListWrapper = {
   display: "flex",
   flexDirection: "column",
-  gap: "12px",
+  gap: "16px", // מרווח נקי בין תגובות
 };
 
 export const commentItemRow = {
   display: "flex",
-  gap: "10px",
+  gap: "12px",
   alignItems: "flex-start",
 };
 
 export const avatarContainer = {
-  width: "35px",
-  height: "35px",
+  width: "32px",
+  height: "32px",
   borderRadius: "50%",
-  backgroundColor: "#eee",
+  backgroundColor: "#fafafa",
   flexShrink: 0,
   overflow: "hidden",
-};
-
-export const avatarPlaceholder = {
-  width: "100%",
-  height: "100%",
+  border: "1px solid #dbdbdb",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#ccc",
-  color: "#fff",
+};
+
+export const avatarPlaceholder = {
+  color: "#8e8e8e",
   fontSize: "12px",
-  fontWeight: "bold",
-};
-
-export const commentBubble = {
-  backgroundColor: "#f0f2f5",
-  padding: "10px 15px",
-  borderRadius: "18px",
-  position: "relative",
-  maxWidth: "85%",
-};
-
-export const bubbleHeader = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: "15px",
-  marginBottom: "2px",
+  fontWeight: "600",
 };
 
 export const authorName = {
-  fontWeight: "bold",
-  fontSize: "0.9rem",
-  color: "#333",
-};
-
-export const dateLabel = {
-  fontSize: "0.7rem",
-  color: "#888",
+  fontWeight: "600",
+  fontSize: "14px",
+  color: "#262626",
+  marginInlineEnd: "6px", // מרווח שעובד גם בעברית וגם באנגלית
 };
 
 export const commentTextBody = {
-  fontSize: "0.95rem",
-  color: "#1c1e21",
+  fontSize: "14px",
+  color: "#262626",
   lineHeight: "1.4",
+  wordBreak: "break-word",
+  display: "inline", // גורם לטקסט להמשיך באותה שורה של השם
 };
 
 export const actionButtonsWrapper = {
   display: "flex",
-  gap: "15px",
-  marginTop: "5px",
+  alignItems: "center",
+  gap: "12px",
+  marginTop: "6px",
+};
+
+export const dateLabel = {
+  fontSize: "12px",
+  color: "#8e8e8e",
 };
 
 export const actionBtnBase = {
   background: "none",
   border: "none",
   cursor: "pointer",
-  fontSize: "0.75rem",
-  fontWeight: "bold",
+  fontSize: "12px",
+  fontWeight: "600",
+  color: "#8e8e8e",
+  padding: "0",
 };

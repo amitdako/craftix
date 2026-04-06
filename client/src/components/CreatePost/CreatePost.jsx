@@ -13,6 +13,7 @@ const CreatePost = ({ currentLang }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   const [formData, setFormData] = useState({
     title: "",
@@ -34,7 +35,6 @@ const CreatePost = ({ currentLang }) => {
     { id: "Other", label: t.other },
   ];
 
-  //Deleting irelevnt date when we finish to use it.
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -50,23 +50,21 @@ const CreatePost = ({ currentLang }) => {
     const file = e.target.files[0];
     if (file) {
       setFormData({ ...formData, media: file });
-      // url for showing the file.
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
   };
 
-  //remove media from post before posting.
   const handleRemoveMedia = () => {
     setFormData({ ...formData, media: null });
-    if (previewUrl) URL.revokeObjectURL(previewUrl); //cleaning memory.
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
-    const fileInput = document.querySelector('input[type="file"]'); //resting input button.
+    const fileInput = document.getElementById("media-upload");
     if (fileInput) fileInput.value = "";
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // don't refresh!
+    e.preventDefault();
     setIsSubmitting(true);
     setError("");
 
@@ -86,10 +84,10 @@ const CreatePost = ({ currentLang }) => {
       };
       data.append("projectDetails", JSON.stringify(details));
     }
-    //Saving the post information in the database.
+
     try {
       await api.post("/posts", data, {
-        headers: { "Content-Type": "multipart/form-data" }, //format of sending information.
+        headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/feed");
     } catch (err) {
@@ -100,10 +98,10 @@ const CreatePost = ({ currentLang }) => {
   };
 
   return (
-    <div style={S.containerStyle}>
+    <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
       <h2 style={S.titleStyle}>{t.newPost}</h2>
 
-      {/* Select type */}
+      {/* Select type - Toggle Switch Style */}
       <div style={S.typeSelectorStyle}>
         <button
           type="button"
@@ -190,23 +188,44 @@ const CreatePost = ({ currentLang }) => {
         />
 
         <label style={S.labelStyle}>{t.uploadMedia}</label>
-        <input
-          type="file"
-          accept="image/*,video/*"
-          style={S.inputStyle}
-          onChange={handleFileChange}
-        />
 
-        {/*Image/video preview with remove button */}
+        {/* העלאת קבצים מעוצבת ונסתרת */}
+        {!previewUrl && (
+          <label style={S.fileUploadLabelStyle}>
+            <svg
+              aria-label="Upload"
+              fill="currentColor"
+              height="24"
+              width="24"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Zm0-1.5a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm9-12h-2.8l-1.5-1.5a1.5 1.5 0 0 0-1.1-.5h-3.2a1.5 1.5 0 0 0-1.1.5L9.8 4H7A3 3 0 0 0 4 7v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3ZM21 17a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 17V7A1.5 1.5 0 0 1 7 5.5h3.5l1.5-1.5h4l1.5 1.5H21A1.5 1.5 0 0 1 22.5 7v10A1.5 1.5 0 0 1 21 17Z"></path>
+            </svg>
+            <span
+              style={{ color: "#0095f6", fontWeight: "600", fontSize: "14px" }}
+            >
+              {t.addImageVideo}
+            </span>
+            <input
+              id="media-upload"
+              type="file"
+              accept="image/*,video/*"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+          </label>
+        )}
+
+        {/* תצוגה מקדימה עם כפתור מחיקה תקין (insetInlineEnd) */}
         {previewUrl && (
-          <div style={{ ...S.previewContainerStyle, position: "relative" }}>
+          <div style={S.previewContainerStyle}>
             <button
               type="button"
               onClick={handleRemoveMedia}
               style={{
                 position: "absolute",
                 top: "10px",
-                right: "10px",
+                insetInlineEnd: "10px", // תומך אוטומטית בימין/שמאל
                 zIndex: 10,
                 backgroundColor: "rgba(0, 0, 0, 0.6)",
                 color: "white",
@@ -218,12 +237,13 @@ const CreatePost = ({ currentLang }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontWeight: "bold",
-                fontSize: "18px",
+                fontWeight: "600",
+                fontSize: "12px",
+                backdropFilter: "blur(4px)",
               }}
               title="Remove media"
             >
-              ×
+              ✕
             </button>
             {formData.media?.type.startsWith("video") ? (
               <video src={previewUrl} style={S.previewMediaStyle} controls />
@@ -243,7 +263,14 @@ const CreatePost = ({ currentLang }) => {
       </form>
 
       {error && (
-        <p style={{ color: "#dc3545", textAlign: "center", marginTop: "15px" }}>
+        <p
+          style={{
+            color: "#ed4956",
+            textAlign: "center",
+            marginTop: "15px",
+            fontSize: "14px",
+          }}
+        >
           {error}
         </p>
       )}

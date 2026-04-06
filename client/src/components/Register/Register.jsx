@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../api/axios";
 import * as S from "./Register.styles";
 import { translations } from "../../translations";
 
 const Register = ({ currentLang }) => {
   const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   const countries = [
     { id: "Israel", label: t.israel },
@@ -56,7 +57,7 @@ const Register = ({ currentLang }) => {
   };
 
   return (
-    <div style={S.containerStyle}>
+    <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
       <h2 style={S.titleStyle}>{t.joinTitle}</h2>
 
       <form onSubmit={handleSubmit} style={S.formStyle}>
@@ -86,7 +87,7 @@ const Register = ({ currentLang }) => {
           required
         />
 
-        <div style={{ textAlign: "inherit" }}>
+        <div>
           <label style={S.labelStyle}>{t.birthDate}</label>
           <input
             type="date"
@@ -97,7 +98,7 @@ const Register = ({ currentLang }) => {
           />
         </div>
 
-        <div style={{ textAlign: "inherit" }}>
+        <div>
           <label style={S.labelStyle}>{t.country}</label>
           <select
             name="country"
@@ -139,19 +140,27 @@ const Register = ({ currentLang }) => {
         <div style={S.messageStyle(message.isSuccess)}>{message.text}</div>
       )}
 
-      <p
+      {/* קישור לעמוד התחברות בסגנון אינסטגרם */}
+      <div
         style={{
-          marginTop: "20px",
+          marginTop: "24px",
           textAlign: "center",
           fontSize: "14px",
-          color: "#65676b",
+          color: "#262626",
         }}
       >
         {t.alreadyMember}{" "}
-        <Link to="/login" style={{ color: "#007bff", textDecoration: "none" }}>
+        <Link
+          to="/login"
+          style={{
+            color: "#0095f6",
+            fontWeight: "600",
+            textDecoration: "none",
+          }}
+        >
           {t.logIn}
         </Link>
-      </p>
+      </div>
     </div>
   );
 };

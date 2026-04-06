@@ -9,6 +9,7 @@ const SavedPosts = ({ currentLang, currentUser }) => {
   const [loading, setLoading] = useState(true);
 
   const t = translations[currentLang] || translations.en;
+  const isHe = currentLang === "he";
 
   useEffect(() => {
     const fetchSaved = async () => {
@@ -24,11 +25,11 @@ const SavedPosts = ({ currentLang, currentUser }) => {
     fetchSaved();
   }, []);
 
-  //unsave post.
+  // unsave post
   const handleUnsave = async (postId) => {
     try {
       await api.post(`/posts/save/${postId}`);
-      //deleting the unsave post without refreshing the page.
+      // deleting the unsave post without refreshing the page.
       setSavedPosts((prev) => prev.filter((post) => post._id !== postId));
     } catch (err) {
       alert(t.unsaveError);
@@ -36,17 +37,31 @@ const SavedPosts = ({ currentLang, currentUser }) => {
   };
 
   if (loading) {
-    return <p style={S.loadingStyle}>{t.gatheringCollection}</p>;
+    return (
+      <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
+        <p style={S.loadingStyle}>{t.gatheringCollection}</p>
+      </div>
+    );
   }
 
   return (
-    <div style={S.containerStyle}>
+    <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
       <h2 style={S.titleStyle}>{t.savedTitle}</h2>
 
       {savedPosts.length === 0 ? (
         <div style={S.messageStyle}>
-          <p>{t.noSavedPosts}</p>
-          <p style={{ fontSize: "14px" }}>{t.exploreInspiration}</p>
+          {/* כותרת קטנה וטקסט משני כמו ב-Empty States מודרניים */}
+          <p
+            style={{
+              margin: "0 0 8px 0",
+              color: "#262626",
+              fontWeight: "600",
+              fontSize: "16px",
+            }}
+          >
+            {t.noSavedPosts}
+          </p>
+          <p style={{ margin: "0" }}>{t.exploreInspiration}</p>
         </div>
       ) : (
         <div style={S.gridStyle}>
@@ -57,7 +72,7 @@ const SavedPosts = ({ currentLang, currentUser }) => {
               post={post}
               currentUser={currentUser}
               onSave={handleUnsave} // if we want to unsave.
-              onDelete={() => {}} //we dont delete in this page.
+              onDelete={() => {}} // we dont delete in this page.
             />
           ))}
         </div>

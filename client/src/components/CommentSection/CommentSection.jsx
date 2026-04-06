@@ -12,10 +12,14 @@ const CommentSection = ({
   commentText,
   setCommentText,
 }) => {
+  const isHe = currentLang === "he";
+  const t = translations[currentLang] || translations.en;
+  const hasText = commentText?.trim().length > 0;
+
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleString("he-IL", {
+    return date.toLocaleString(isHe ? "he-IL" : "en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -24,31 +28,32 @@ const CommentSection = ({
     });
   };
 
-  const t = translations[currentLang] || translations.en;
-
   return (
-    <div style={s.commentSectionContainer}>
+    <div
+      style={{ ...s.commentSectionContainer, direction: isHe ? "rtl" : "ltr" }}
+    >
       <h3 style={s.titleStyle}>{t.commentsTitle}</h3>
 
-      {/* Adding comment form */}
       <form onSubmit={handleAddComment} style={s.formStyle}>
         <input
           type="text"
-          placeholder={t.commentPlaceholder}
+          placeholder={t.commentPlaceholder || "Add a comment..."}
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           style={s.inputStyle}
         />
-        <button type="submit" style={s.sendBtnStyle}>
-          {t.send} {/* כפתור שליחה */}
+        <button
+          type="submit"
+          disabled={!hasText}
+          style={s.sendBtnStyle(hasText)}
+        >
+          {t.send || "Post"}
         </button>
       </form>
 
-      {/* list of comments */}
       <div style={s.commentListWrapper}>
         {allComments.map((comment) => (
           <div key={comment._id} style={s.commentItemRow}>
-            {/* Avatar Section */}
             <div style={s.avatarContainer}>
               {comment.author?.profileImage ? (
                 <img
@@ -58,45 +63,48 @@ const CommentSection = ({
                 />
               ) : (
                 <div style={s.avatarPlaceholder}>
-                  {comment.author?.displayName?.[0]}
+                  {comment.author?.displayName?.[0] || "U"}
                 </div>
               )}
             </div>
 
-            {/* Content Section */}
-            <div style={s.commentBubble}>
-              <div style={s.bubbleHeader}>
+            {/* כאן התיקון: אזור התוכן מתיישר לפי השפה בצורה מושלמת */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <div style={{ textAlign: "start" }} dir="auto">
                 <span style={s.authorName}>{comment.author?.displayName}</span>
+                <span style={s.commentTextBody}>{comment.text}</span>
+              </div>
+
+              <div style={s.actionButtonsWrapper}>
                 <span style={s.dateLabel}>
                   {formatDateTime(comment.createdAt)}
                 </span>
-              </div>
 
-              <div style={s.commentTextBody}>{comment.text}</div>
-
-              {/* Actions Section */}
-              <div style={s.actionButtonsWrapper}>
                 <button
                   onClick={() => handleLikeComment(comment._id)}
                   style={{
                     ...s.actionBtnBase,
                     color: comment.likes?.includes(currentUserId)
-                      ? "#ff4d4d"
-                      : "#65676b",
-                    display: "flex",
-                    gap: "4px",
+                      ? "#ed4956"
+                      : "#8e8e8e",
                   }}
                 >
-                  {t.likes}{" "}
-                  <span dir="ltr">({comment.likes?.length || 0})</span>
+                  {comment.likes?.length || 0} {t.likes || "likes"}
                 </button>
 
                 {comment.author?._id === currentUserId && (
                   <button
                     onClick={() => handleDeleteComment(comment._id)}
-                    style={{ ...s.actionBtnBase, color: "#dc3545" }}
+                    style={{ ...s.actionBtnBase, color: "#ed4956" }}
                   >
-                    {t.delete}
+                    {t.delete || "Delete"}
                   </button>
                 )}
               </div>

@@ -1,65 +1,68 @@
-// Feed.styles.js
-
 export const feedContainerStyle = {
-  maxWidth: "700px",
-  margin: "auto",
-  padding: "20px",
+  maxWidth: "600px",
+  margin: "0 auto",
+  padding: "20px 0",
 };
 
 export const dropdownWrapperStyle = {
   position: "relative",
-  marginBottom: "30px",
+  marginBottom: "20px",
   zIndex: 20,
+  padding: "0 15px",
 };
 
 export const dropdownToggleStyle = {
   width: "100%",
-  padding: "12px 20px",
-  backgroundColor: "#fff",
-  border: "1px solid #ddd",
-  borderRadius: "10px",
+  padding: "10px 16px",
+  backgroundColor: "#fafafa",
+  border: "1px solid #dbdbdb",
+  borderRadius: "8px",
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center",
   cursor: "pointer",
-  fontSize: "15px",
+  fontSize: "14px",
   fontWeight: "600",
+  color: "#262626",
 };
 
 export const dropdownMenuStyle = {
   position: "absolute",
   top: "100%",
-  left: "0",
-  right: "0",
-  backgroundColor: "#fff",
-  border: "1px solid #eee",
-  borderRadius: "10px",
-  boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+  left: "15px",
+  right: "15px",
+  backgroundColor: "#ffffff",
+  border: "1px solid #dbdbdb",
+  borderRadius: "8px",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.08)", // צללית שטוחה ועדינה
   zIndex: 100,
-  marginTop: "5px",
+  marginTop: "4px",
   maxHeight: "250px",
   overflowY: "auto",
 };
 
 export const categoryItemStyle = {
-  padding: "12px 20px",
+  padding: "10px 16px",
   cursor: "pointer",
-  borderBottom: "1px solid #f9f9f9",
-  transition: "background 0.2s",
+  borderBottom: "1px solid #efefef",
+  fontSize: "14px",
+  color: "#262626",
+  backgroundColor: "#ffffff",
 };
 
 export const userResultsSectionStyle = {
-  backgroundColor: "#fff",
+  backgroundColor: "#ffffff",
   padding: "15px",
-  borderRadius: "12px",
+  borderBottom: "1px solid #efefef",
+  borderTop: "1px solid #efefef",
   marginBottom: "20px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
 };
 
 export const userListHorizontalStyle = {
   display: "flex",
-  gap: "20px",
+  gap: "16px",
   overflowX: "auto",
-  paddingBottom: "10px",
+  paddingBottom: "8px",
   scrollbarWidth: "none", // For Firefox
 };
 
@@ -68,25 +71,37 @@ export const userCardStyle = {
   flexDirection: "column",
   alignItems: "center",
   cursor: "pointer",
-  minWidth: "70px",
+  minWidth: "64px",
+};
+
+export const avatarRingStyle = {
+  width: "60px",
+  height: "60px",
+  borderRadius: "50%",
+  background:
+    "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", // טבעת הסטוריז
+  padding: "2px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "6px",
 };
 
 export const userAvatarStyle = {
-  width: "55px",
-  height: "55px",
+  width: "100%",
+  height: "100%",
   borderRadius: "50%",
   objectFit: "cover",
-  border: "2px solid #007bff",
-  padding: "2px",
-  marginBottom: "5px",
+  border: "2px solid #ffffff",
+  backgroundColor: "#fafafa",
 };
 
 export const userNameStyle = {
   fontSize: "12px",
-  fontWeight: "600",
-  color: "#333",
+  fontWeight: "400",
+  color: "#262626",
   textAlign: "center",
-  maxWidth: "80px",
+  maxWidth: "70px",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -95,20 +110,21 @@ export const userNameStyle = {
 export const postsListStyle = {
   display: "flex",
   flexDirection: "column",
-  gap: "10px",
 };
 
 export const emptyStateStyle = {
   textAlign: "center",
-  padding: "50px",
-  color: "#666",
+  padding: "40px 20px",
+  color: "#8e8e8e",
+  fontSize: "14px",
 };
 
 export const clearFilterButtonStyle = {
-  color: "#007bff",
+  color: "#0095f6",
   border: "none",
   background: "none",
   cursor: "pointer",
-  fontWeight: "bold",
-  textDecoration: "underline",
+  fontWeight: "600",
+  marginTop: "12px",
+  fontSize: "14px",
 };

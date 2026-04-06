@@ -1,86 +1,135 @@
 // ImplementationForm.styles.js
 
-export const formContainer = {
-  padding: "15px",
-  backgroundColor: "#fff5f5",
-  borderTop: "1px solid #ffe3e3",
-};
+export const formContainer = (isHe) => ({
+  padding: "16px 20px",
+  backgroundColor: "#ffffff", // לבן נקי לחלוטין (בלי ורוד)
+  borderTop: "1px solid #efefef",
+  direction: isHe ? "rtl" : "ltr", // יישור אוטומטי לימין או לשמאל
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+});
 
 export const header = {
   display: "flex",
-  alignItems: "center",
-  marginBottom: "15px",
+  alignItems: "flex-start",
   gap: "12px",
-  direction: "ltr",
 };
 
 export const avatar = {
-  width: "40px",
-  height: "40px",
+  width: "36px",
+  height: "36px",
   borderRadius: "50%",
   overflow: "hidden",
   flexShrink: 0,
-  backgroundColor: "#007bff",
-  color: "white",
+  backgroundColor: "#efefef", // אפור עדין
+  color: "#8e8e8e",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontWeight: "bold",
+  fontWeight: "600",
+  fontSize: "14px",
+  border: "1px solid #dbdbdb",
+};
+
+export const inputArea = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px",
 };
 
 export const textarea = {
   width: "100%",
-  padding: "15px",
-  borderRadius: "15px",
-  border: "1px solid #ddd",
-  minHeight: "100px",
+  padding: "12px 16px",
+  borderRadius: "20px", // מראה מעוגל ורך כמו באינסטגרם
+  border: "1px solid #dbdbdb",
+  minHeight: "44px",
   outline: "none",
-  fontSize: "1rem",
+  fontSize: "14px",
   resize: "none",
   fontFamily: "inherit",
-  backgroundColor: "#fff",
-  marginBottom: "10px",
+  backgroundColor: "#fafafa",
+  color: "#262626",
+  boxSizing: "border-box",
+};
+
+export const previewContainer = {
+  position: "relative",
+  borderRadius: "12px",
+  overflow: "hidden",
+  border: "1px solid #dbdbdb",
+  width: "fit-content",
+};
+
+export const previewImage = {
+  maxWidth: "100%",
+  maxHeight: "150px",
+  objectFit: "cover",
+  display: "block",
+};
+
+export const removeBtn = {
+  position: "absolute",
+  top: "6px",
+  insetInlineEnd: "6px", // עובד לשני הכיוונים
+  zIndex: 10,
+  backgroundColor: "rgba(0, 0, 0, 0.6)",
+  color: "white",
+  border: "none",
+  borderRadius: "50%",
+  width: "26px",
+  height: "26px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  fontSize: "12px",
+  backdropFilter: "blur(4px)",
 };
 
 export const footer = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginTop: "10px",
-  direction: "ltr",
+  marginTop: "4px",
+  paddingInlineStart: "48px", // מזיח את הכפתורים שיהיו באותו קו עם הטקסט
 };
 
 export const addMediaLabel = {
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
-  gap: "8px",
-  color: "#65676b",
+  gap: "6px",
+  color: "#0095f6", // כחול אינסטגרם
   fontWeight: "600",
-  fontSize: "0.95rem",
+  fontSize: "14px",
 };
 
 export const buttonGroup = {
   display: "flex",
-  gap: "10px",
+  gap: "8px",
 };
 
 export const cancelBtn = {
-  backgroundColor: "white",
-  color: "#1c1e21",
-  border: "1px solid #ddd",
-  padding: "8px 20px",
-  borderRadius: "20px",
+  backgroundColor: "transparent",
+  color: "#262626",
+  border: "none",
+  padding: "6px 12px",
   cursor: "pointer",
   fontWeight: "600",
+  fontSize: "14px",
 };
 
-export const shareBtn = {
-  backgroundColor: "#ff4757",
+export const shareBtn = (hasText) => ({
+  backgroundColor: "#0095f6", // כחול נקי
   color: "white",
   border: "none",
-  padding: "8px 25px",
-  borderRadius: "20px",
-  cursor: "pointer",
-  fontWeight: "bold",
-};
+  padding: "6px 16px",
+  borderRadius: "16px",
+  cursor: hasText ? "pointer" : "default",
+  fontWeight: "600",
+  fontSize: "14px",
+  opacity: hasText ? 1 : 0.5,
+  transition: "opacity 0.2s",
+});

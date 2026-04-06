@@ -1,52 +1,36 @@
-// PostCard.styles.js
-
 export const cardStyle = {
-  border: "1px solid #eee",
-  borderRadius: "15px",
   backgroundColor: "#fff",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-  position: "relative",
-  marginBottom: "20px",
-  overflow: "hidden",
+  borderBottom: "1px solid #efefef", // קו הפרדה נקי כמו בפיד
+  paddingBottom: "15px",
+  marginBottom: "15px",
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
 };
 
 export const headerWrapper = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: "15px",
-  direction: "ltr",
-  flexDirection: "row",
+  padding: "10px 14px",
 };
 
-// קבוצת הפרופיל (תמונה + טקסט)
 export const authorInfoGroup = {
   display: "flex",
   alignItems: "center",
-  gap: "12px",
-  flexDirection: "row",
-  direction: "ltr",
-};
-
-export const textStack = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  textAlign: "left",
+  gap: "10px",
 };
 
 export const avatarStyle = {
-  width: "40px",
-  height: "40px",
+  width: "32px",
+  height: "32px",
   borderRadius: "50%",
-  backgroundColor: "#007bff",
-  color: "white",
+  background:
+    "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+  padding: "2px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontWeight: "bold",
-  overflow: "hidden",
-  border: "1px solid #eee",
   flexShrink: 0,
 };
 
@@ -54,48 +38,49 @@ export const avatarImgStyle = {
   width: "100%",
   height: "100%",
   objectFit: "cover",
+  borderRadius: "50%",
+  border: "2px solid #fff",
+  backgroundColor: "#fafafa",
+};
+
+export const textStack = {
+  display: "flex",
+  flexDirection: "column",
 };
 
 export const authorNameStyle = {
-  fontWeight: "bold",
-  fontSize: "15px",
+  fontWeight: "600",
+  fontSize: "14px",
   textDecoration: "none",
-  color: "#1c1e21",
+  color: "#262626",
 };
 
 export const dateStyle = {
   fontSize: "12px",
-  color: "#65676b",
-  marginTop: "1px",
+  color: "#8e8e8e",
 };
 
 export const categoryBadgeStyle = {
   fontSize: "12px",
-  backgroundColor: "#e7f3ff",
-  color: "#1877f2",
-  padding: "4px 12px",
-  borderRadius: "20px",
-  fontWeight: "bold",
-  direction: "rtl",
-};
-
-export const contentTextStyle = {
-  whiteSpace: "pre-wrap",
-  color: "#444",
-  margin: "0 15px 15px 15px",
-  textAlign: "start",
-  unicodeBidi: "plaintext",
+  color: "#262626",
+  backgroundColor: "#efefef", // רקע עדין
+  padding: "4px 8px",
+  borderRadius: "4px", // פינות קטנות, לא עגול לגמרי
+  fontWeight: "600",
+  letterSpacing: "0.3px",
 };
 
 export const mediaWrapperStyle = {
-  marginBottom: "15px",
-  overflow: "hidden",
-  backgroundColor: "#f0f2f5",
+  width: "100%",
+  backgroundColor: "#fafafa",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 export const mediaContentStyle = {
   width: "100%",
-  maxHeight: "450px",
+  maxHeight: "585px",
   objectFit: "cover",
   display: "block",
 };
@@ -104,66 +89,70 @@ export const footerContainerStyle = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: "15px",
-  borderTop: "1px solid #f0f2f5",
+  padding: "8px 14px 4px 14px",
 };
 
 export const leftFooterActions = {
   display: "flex",
   alignItems: "center",
-  gap: "12px",
+  gap: "16px",
 };
 
-export const rightFooterActions = { display: "flex", gap: "15px" };
-
-export const likeButtonStyle = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
+export const rightFooterActions = {
   display: "flex",
   alignItems: "center",
-  gap: "4px",
-  outline: "none",
+  gap: "16px",
 };
 
-export const commentToggleBtnStyle = { ...likeButtonStyle };
-
-export const likeCountLabel = {
-  fontWeight: "bold",
-  color: "#65676b",
-  fontSize: "14px",
-};
-
-export const secondaryBtnStyle = {
+export const iconBtnStyle = {
   background: "none",
   border: "none",
   cursor: "pointer",
-  fontSize: "1.3rem",
+  padding: "0",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#262626",
+};
+
+export const likeCountLabel = {
+  fontWeight: "600",
+  color: "#262626",
+  fontSize: "14px",
+  padding: "0 14px",
+  marginBottom: "6px",
+};
+
+export const contentTextStyle = {
+  color: "#262626",
+  fontSize: "14px",
+  lineHeight: "1.5",
 };
 export const sectionTitleStyle = {
   display: "block",
-  fontSize: "0.9rem",
-  fontWeight: "bold",
-  color: "#65676b",
-  marginBottom: "8px",
+  fontSize: "13px",
+  fontWeight: "600",
+  color: "#262626",
+  marginBottom: "6px",
 };
 
 export const badgeContainerStyle = {
   display: "flex",
   flexWrap: "wrap",
-  gap: "8px",
-  marginBottom: "10px",
-  justifyContent: "flex-start",
+  gap: "6px",
+  marginBottom: "12px",
 };
 
 export const badgeStyle = {
-  backgroundColor: "#f0f2f5",
-  color: "#1c1e21",
-  padding: "5px 12px",
-  borderRadius: "16px",
-  fontSize: "0.85rem",
-  fontWeight: "500",
-  border: "1px solid #ebedf0",
+  backgroundColor: "#fafafa",
+  color: "#262626",
+  border: "1px solid #dbdbdb", // מסגרת עדינה ונקייה
+  padding: "4px 10px",
+  borderRadius: "6px",
+  fontSize: "13px",
 };
-
-export const deleteBtnStyle = { ...secondaryBtnStyle, opacity: 0.7 };
+export const toolsMaterialsText = {
+  fontSize: "14px",
+  color: "#262626",
+  marginTop: "4px",
+};

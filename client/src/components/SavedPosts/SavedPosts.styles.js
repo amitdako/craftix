@@ -1,34 +1,37 @@
 // SavedPosts.styles.js
 
 export const containerStyle = {
-  padding: "20px",
-  maxWidth: "800px",
-  margin: "40px auto",
+  padding: "20px 0",
+  maxWidth: "600px", // הותאם בדיוק לרוחב של הפיד והפרופיל למראה אחיד
+  margin: "0 auto",
+  boxSizing: "border-box",
 };
 
 export const titleStyle = {
   textAlign: "center",
-  marginBottom: "40px",
-  color: "#1c1e21",
-  fontSize: "26px",
-  fontWeight: "bold",
+  marginBottom: "30px",
+  color: "#262626", // שחור אינסטגרם נקי
+  fontSize: "20px",
+  fontWeight: "600",
 };
 
 export const gridStyle = {
-  display: "grid",
-  gap: "25px",
+  display: "flex",
+  flexDirection: "column", // מציג אותם בטור (כמו בפיד) במקום כגריד מפוזר
 };
 
 export const messageStyle = {
   textAlign: "center",
-  marginTop: "50px",
-  color: "#65676b",
-  fontSize: "16px",
-  lineHeight: "1.6",
+  padding: "60px 20px",
+  color: "#8e8e8e", // אפור עדין לטקסט משני
+  fontSize: "14px",
+  lineHeight: "1.5",
 };
 
 export const loadingStyle = {
-  ...messageStyle,
-  color: "#007bff",
-  fontWeight: "600",
+  textAlign: "center",
+  marginTop: "60px",
+  color: "#8e8e8e",
+  fontSize: "14px",
+  fontWeight: "400",
 };
