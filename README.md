@@ -40,7 +40,7 @@ The architecture of Craftix is designed for scalability and a clean separation o
 
 ## Getting Started
 
-Note for Recruiters & Evaluators: To save your time, a full demonstration of the platform's functionality is available in the Preview Video above.
+Note for Recruiters & Evaluators: To save your time, a full demonstration of the platform's functionality is available in the Preview Video below.
 If you wish to run the code locally to review the architecture, you can do so using a local database. AWS keys are only required if you want to test the image upload feature.
 
 ## Prerequisites
@@ -56,15 +56,20 @@ MongoDB (A local instance running on your machine is sufficient)
 
 ## Backend Setup:
 
-1. cd server
-2. npm install
+1. `cd server`
+2. npm install```
 3. Create a .env file in the server root directory.
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/craftix
+   ````PORT=5000
+   MONGO_URI=mongodb://localhost:27017/craftix```
+   ````
 
 # Optional: Add AWS keys to enable image uploading
 
-4. npm run dev
+4. ```
+   npm run dev
+   ```
+
+```
 
 ## Frontend Setup:
 
@@ -74,3 +79,4 @@ MongoDB (A local instance running on your machine is sufficient)
 4. Open your browser and navigate to http://localhost:3000.
 
 - **Preview:** ![demo](show.gif) — _Watch this quick preview to see Craftix in action!_
+```
