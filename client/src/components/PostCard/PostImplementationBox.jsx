@@ -15,25 +15,24 @@ const PostImplementationBox = ({
   return (
     <div
       style={{
-        margin: "10px 14px 15px 14px", // מיושר בול עם הטקסט של הפוסט
+        margin: "10px 14px 15px 14px",
         border: "1px solid #dbdbdb",
         borderRadius: "8px",
         backgroundColor: "#ffffff",
         cursor: "pointer",
         display: "flex",
-        alignItems: "stretch", // מותח את התמונה לכל הגובה
+        alignItems: "stretch",
         overflow: "hidden",
-        direction: isHe ? "rtl" : "ltr", // מתהפך אוטומטית לפי השפה
+        direction: isHe ? "rtl" : "ltr",
       }}
       onClick={onNavigate}
     >
-      {/* צד אחד: התמונה של הפרויקט המקורי */}
-      {parentPost.mediaUrl && (
+      {parentPost.mediaUrl && ( //the picture of the original post
         <div
           style={{
             width: "85px",
             flexShrink: 0,
-            borderInlineEnd: "1px solid #dbdbdb", // שם קו הפרדה בצד הנכון תמיד
+            borderInlineEnd: "1px solid #dbdbdb",
             backgroundColor: "#fafafa",
           }}
         >
@@ -49,8 +48,7 @@ const PostImplementationBox = ({
         </div>
       )}
 
-      {/* צד שני: טקסט (יוצר וכותרת) */}
-      <div
+      <div // title and creator
         style={{
           padding: "12px",
           display: "flex",
@@ -59,7 +57,6 @@ const PostImplementationBox = ({
           flex: 1,
         }}
       >
-        {/* שורה עליונה: תמונת פרופיל קטנה ושם היוצר */}
         <div
           style={{
             display: "flex",
@@ -101,7 +98,6 @@ const PostImplementationBox = ({
           </span>
         </div>
 
-        {/* שורה תחתונה: כותרת הפרויקט */}
         <h4
           style={{
             margin: "0",
@@ -110,7 +106,7 @@ const PostImplementationBox = ({
             fontWeight: "600",
             lineHeight: "1.3",
             display: "-webkit-box",
-            WebkitLineClamp: 2, // חותך יפה עם 3 נקודות אם הטקסט ארוך מדי
+            WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
           }}

@@ -24,7 +24,6 @@ const SharedBox = ({ currentLang, parentPost, getImageUrl }) => {
       }}
       onClick={() => navigate(`/post/${parentPost._id || parentPost}`)}
     >
-      {/* תמונה בצד שמאל/ימין */}
       {parentPost.mediaUrl && (
         <div
           style={{
@@ -42,8 +41,7 @@ const SharedBox = ({ currentLang, parentPost, getImageUrl }) => {
         </div>
       )}
 
-      {/* תוכן */}
-      <div
+      <div //content
         style={{
           padding: "12px",
           display: "flex",

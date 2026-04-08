@@ -20,15 +20,12 @@ const ImplementationForm = ({
   const t = translations[currentLang] || translations.en;
   const isHe = currentLang === "he";
 
-  // הגנה למניעת קריסה כש-value חסר
   const safeValue = value || "";
   const hasText = safeValue.trim().length > 0;
 
   return (
     <div style={S.formContainer(isHe)}>
-      {/* אזור עליון: תמונה + הקלדה */}
       <div style={S.header}>
-        {/* תמונת פרופיל */}
         <div style={S.avatar}>
           {currentUser?.profileImage ? (
             <img
@@ -41,7 +38,6 @@ const ImplementationForm = ({
           )}
         </div>
 
-        {/* שדה הקלדה ותמונה */}
         <div style={S.inputArea}>
           <textarea
             autoFocus
@@ -51,7 +47,6 @@ const ImplementationForm = ({
             style={S.textarea}
           />
 
-          {/* תצוגה מקדימה למדיה */}
           {previewUrl && (
             <div style={S.previewContainer}>
               <button
@@ -71,7 +66,6 @@ const ImplementationForm = ({
         </div>
       </div>
 
-      {/* אזור תחתון: הוספת תמונה וכפתורי פעולה */}
       <div style={S.footer}>
         <label style={S.addMediaLabel}>
           <input
@@ -80,7 +74,6 @@ const ImplementationForm = ({
             onChange={onFileChange}
             style={{ display: "none" }}
           />
-          {/* אייקון מצלמה נקי בסגנון אינסטגרם */}
           <svg
             aria-label="Camera"
             fill="currentColor"

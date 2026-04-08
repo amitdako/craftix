@@ -1,5 +1,3 @@
-// EditPost.styles.js
-
 export const containerStyle = {
   maxWidth: "600px",
   margin: "40px auto",

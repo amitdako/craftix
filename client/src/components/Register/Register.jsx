@@ -34,7 +34,7 @@ const Register = ({ currentLang }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  //submiting the form.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -140,7 +140,6 @@ const Register = ({ currentLang }) => {
         <div style={S.messageStyle(message.isSuccess)}>{message.text}</div>
       )}
 
-      {/* קישור לעמוד התחברות בסגנון אינסטגרם */}
       <div
         style={{
           marginTop: "24px",

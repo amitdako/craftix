@@ -1,4 +1,5 @@
 const executionSchema = new mongoose.Schema({
+  //for implamation post
   originalPost: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Post",

@@ -1,5 +1,3 @@
-// CommentSection.styles.js
-
 export const commentSectionContainer = {
   padding: "10px 0",
   display: "flex",
@@ -7,9 +5,8 @@ export const commentSectionContainer = {
 };
 
 export const titleStyle = {
-  display: "none", // באינסטגרם אין כותרת "תגובות", זה פשוט מתחיל. אפשר לשנות ל-block אם תרצה.
+  display: "none",
 };
-
 export const formStyle = {
   display: "flex",
   alignItems: "center",
@@ -32,7 +29,7 @@ export const inputStyle = {
 
 export const sendBtnStyle = (hasText) => ({
   backgroundColor: "transparent",
-  color: "#0095f6", // כחול אינסטגרם
+  color: "#0095f6",
   border: "none",
   fontWeight: "600",
   fontSize: "14px",
@@ -45,7 +42,7 @@ export const sendBtnStyle = (hasText) => ({
 export const commentListWrapper = {
   display: "flex",
   flexDirection: "column",
-  gap: "16px", // מרווח נקי בין תגובות
+  gap: "16px",
 };
 
 export const commentItemRow = {
@@ -77,7 +74,7 @@ export const authorName = {
   fontWeight: "600",
   fontSize: "14px",
   color: "#262626",
-  marginInlineEnd: "6px", // מרווח שעובד גם בעברית וגם באנגלית
+  marginInlineEnd: "6px",
 };
 
 export const commentTextBody = {
@@ -85,7 +82,7 @@ export const commentTextBody = {
   color: "#262626",
   lineHeight: "1.4",
   wordBreak: "break-word",
-  display: "inline", // גורם לטקסט להמשיך באותה שורה של השם
+  display: "inline",
 };
 
 export const actionButtonsWrapper = {

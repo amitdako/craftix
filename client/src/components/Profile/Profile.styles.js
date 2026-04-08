@@ -1,8 +1,6 @@
-// Profile.styles.js
-
 export const containerStyle = {
   padding: "20px 0",
-  maxWidth: "600px", // מיושר לרוחב של הפיד לשמירה על עקביות
+  maxWidth: "600px",
   margin: "0 auto",
   boxSizing: "border-box",
 };
@@ -13,7 +11,7 @@ export const headerStyle = {
   gap: "28px",
   backgroundColor: "transparent",
   padding: "0 16px 30px 16px",
-  borderBottom: "1px solid #dbdbdb", // קו הפרדה נקי ועדין
+  borderBottom: "1px solid #dbdbdb",
   marginBottom: "20px",
 };
 
@@ -39,7 +37,7 @@ export const avatarContainerStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: "3px solid #ffffff", // מרווח לבן שמפריד בין התמונה לטבעת הצבעונית
+  border: "3px solid #ffffff",
 };
 
 export const fallbackAvatarStyle = {
@@ -76,7 +74,7 @@ export const actionButtonStyle = {
   padding: "6px 16px",
   borderRadius: "8px",
   border: "none",
-  backgroundColor: "#0095f6", // כחול אינסטגרם מרכזי
+  backgroundColor: "#0095f6",
   color: "#ffffff",
   textDecoration: "none",
   fontSize: "14px",
@@ -89,7 +87,7 @@ export const actionButtonStyle = {
 
 export const editButtonStyle = {
   ...actionButtonStyle,
-  backgroundColor: "#efefef", // כפתור משני שטוח
+  backgroundColor: "#efefef",
   color: "#262626",
 };
 

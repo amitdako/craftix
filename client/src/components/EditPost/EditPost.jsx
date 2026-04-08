@@ -13,7 +13,7 @@ const EditPost = ({ currentLang }) => {
   const [error, setError] = useState("");
   const [postType, setPostType] = useState("general");
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [mediaRemoved, setMediaRemoved] = useState(false); // לדעת אם המשתמש מחק את התמונה הקיימת
+  const [mediaRemoved, setMediaRemoved] = useState(false); // does the media removed?
 
   const t = translations[currentLang] || translations.en;
   const isHe = currentLang === "he";
@@ -45,7 +45,6 @@ const EditPost = ({ currentLang }) => {
     return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
   };
 
-  // שאיבת נתוני הפוסט הקיים בעת טעינת העמוד
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -60,7 +59,7 @@ const EditPost = ({ currentLang }) => {
           tools: post.projectDetails?.tools || [],
           materials: post.projectDetails?.materials || [],
           difficulty: post.projectDetails?.difficulty || 1,
-          media: null, // מדיה חדשה תהיה כאן רק אם הועלתה
+          media: null,
         });
 
         if (post.mediaUrl) {
@@ -75,7 +74,6 @@ const EditPost = ({ currentLang }) => {
     fetchPost();
   }, [id, t.errorConnection]);
 
-  // ניקוי זיכרון של התצוגה המקדימה
   useEffect(() => {
     return () => {
       if (previewUrl && previewUrl.startsWith("blob:"))
@@ -118,7 +116,6 @@ const EditPost = ({ currentLang }) => {
     data.append("category", formData.category);
     data.append("content", formData.content);
 
-    // סימון לשרת אם התמונה נמחקה
     if (mediaRemoved) {
       data.append("removeMedia", "true");
     }
@@ -138,11 +135,11 @@ const EditPost = ({ currentLang }) => {
     }
 
     try {
-      // שליחת בקשת עדכון (PUT)
       await api.put(`/posts/${id}`, data, {
+        //updating the form in the server
         headers: { "Content-Type": "multipart/form-data" },
       });
-      navigate(-1); // חזרה לעמוד הקודם (לפוסט המורחב או לפיד) אחרי עריכה מוצלחת
+      navigate(-1); // back to the previous page.
     } catch (err) {
       setError(t.errorConnection || "An error occurred while saving.");
     } finally {

@@ -17,7 +17,6 @@ const PostContent = ({
       onClick={onNavigate}
       style={{ cursor: "pointer", padding: "0 14px 14px 14px" }}
     >
-      {/* אזור הכותרת - מופיע רק אם באמת יש כותרת (פרויקט) */}
       {title && (
         <div style={{ marginBottom: "6px" }} dir="auto">
           <span
@@ -28,7 +27,6 @@ const PostContent = ({
         </div>
       )}
 
-      {/* אזור תוכן הפוסט - שומר על ירידות שורה (Enter) שהוקלדו במקור */}
       <div
         style={{
           ...s.contentTextStyle,
@@ -40,7 +38,6 @@ const PostContent = ({
         {content}
       </div>
 
-      {/* כלים - כתגיות מעוצבות ונקיות */}
       {tools && tools.length > 0 && (
         <div style={{ marginTop: "12px" }} dir="auto">
           <span style={s.sectionTitleStyle}>{t.tools}:</span>
@@ -54,7 +51,6 @@ const PostContent = ({
         </div>
       )}
 
-      {/* חומרים - כתגיות מעוצבות ונקיות */}
       {materials && materials.length > 0 && (
         <div style={{ marginTop: "12px" }} dir="auto">
           <span style={s.sectionTitleStyle}>{t.materials}:</span>

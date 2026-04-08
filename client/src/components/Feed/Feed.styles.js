@@ -34,7 +34,7 @@ export const dropdownMenuStyle = {
   backgroundColor: "#ffffff",
   border: "1px solid #dbdbdb",
   borderRadius: "8px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)", // צללית שטוחה ועדינה
+  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
   zIndex: 100,
   marginTop: "4px",
   maxHeight: "250px",
@@ -63,7 +63,7 @@ export const userListHorizontalStyle = {
   gap: "16px",
   overflowX: "auto",
   paddingBottom: "8px",
-  scrollbarWidth: "none", // For Firefox
+  scrollbarWidth: "none",
 };
 
 export const userCardStyle = {

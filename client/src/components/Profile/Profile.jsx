@@ -20,7 +20,6 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
   const targetId = id || currentUser?.id || currentUser?._id;
   const isMyProfile = !id || id === (currentUser?.id || currentUser?._id);
 
-  // פונקציית העזר לתמונות שהייתה חסרה בפרופיל
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
     if (imagePath.startsWith("http")) return imagePath;
@@ -133,7 +132,6 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
 
   return (
     <div style={{ ...S.containerStyle, direction: isHe ? "rtl" : "ltr" }}>
-      {/* Header - Instagram Style */}
       <div style={S.headerStyle}>
         <div style={S.avatarRingStyle}>
           <div style={S.avatarContainerStyle}>
@@ -180,10 +178,8 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           )}
         </div>
       </div>
-
-      {/* Internal Search */}
       <div style={S.searchWrapperStyle}>
-        <input
+        <input //internal search
           type="text"
           placeholder={`${t.searchPrefix} ${profileUser?.displayName || "user"}${t.searchSuffix}`}
           value={profileSearch}
@@ -191,8 +187,6 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           style={S.profileSearchInputStyle}
         />
       </div>
-
-      {/* Section Title */}
       <h3 style={S.sectionTitleStyle}>
         {isMyProfile
           ? `${t.myprojPrefix}${profileUser?.displayName || "User"}${t.myprojSuffix}`
@@ -214,9 +208,8 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           </span>
         )}
       </h3>
-
-      {/* Posts List / Empty State */}
-      {posts.length === 0 ? (
+      /
+      {posts.length === 0 ? ( //posts list
         <div style={S.emptyStateStyle}>
           <p>
             {profileSearch
@@ -238,7 +231,7 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           {posts.map((post) => (
             <PostCard
               key={post._id}
-              currentLang={currentLang} // הוסף כדי שהתרגומים יעבדו!
+              currentLang={currentLang}
               post={post}
               currentUser={currentUser}
               onDelete={handleDelete}

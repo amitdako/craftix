@@ -1,19 +1,17 @@
-// Register.styles.js
-
 export const containerStyle = {
-  maxWidth: "350px", // שמרנו על רוחב זהה לעמוד ה-Login למראה אחיד
+  maxWidth: "350px",
   margin: "50px auto",
   padding: "40px 30px",
   backgroundColor: "#ffffff",
   borderRadius: "8px",
-  border: "1px solid #dbdbdb", // מסגרת עדינה במקום צללית
+  border: "1px solid #dbdbdb",
   boxSizing: "border-box",
 };
 
 export const titleStyle = {
   textAlign: "center",
   marginBottom: "30px",
-  color: "#262626", // שחור נקי
+  color: "#262626",
   fontSize: "24px",
   fontWeight: "600",
 };
@@ -21,7 +19,7 @@ export const titleStyle = {
 export const formStyle = {
   display: "flex",
   flexDirection: "column",
-  gap: "10px", // מרווח צפוף ונקי בין השדות
+  gap: "10px",
 };
 
 export const inputStyle = {
@@ -29,7 +27,7 @@ export const inputStyle = {
   padding: "10px 12px",
   borderRadius: "6px",
   border: "1px solid #dbdbdb",
-  backgroundColor: "#fafafa", // רקע אפרפר לשדות
+  backgroundColor: "#fafafa",
   fontSize: "14px",
   color: "#262626",
   boxSizing: "border-box",
@@ -42,7 +40,7 @@ export const labelStyle = {
   marginBottom: "4px",
   fontSize: "12px",
   fontWeight: "600",
-  color: "#8e8e8e", // אפור עדין לתוויות של תאריך ומדינה
+  color: "#8e8e8e",
 };
 
 export const buttonStyle = (isSubmitting) => ({
@@ -50,7 +48,7 @@ export const buttonStyle = (isSubmitting) => ({
   padding: "10px",
   borderRadius: "8px",
   border: "none",
-  backgroundColor: "#0095f6", // כחול אינסטגרם
+  backgroundColor: "#0095f6",
   color: "#ffffff",
   fontSize: "14px",
   fontWeight: "600",
@@ -65,5 +63,5 @@ export const messageStyle = (isSuccess) => ({
   textAlign: "center",
   fontSize: "14px",
   fontWeight: "500",
-  color: isSuccess ? "#0095f6" : "#ed4956", // צבע טקסט נקי במקום קופסת התראה גסה
+  color: isSuccess ? "#0095f6" : "#ed4956",
 });

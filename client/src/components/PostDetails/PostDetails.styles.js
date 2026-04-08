@@ -1,11 +1,9 @@
-// PostDetails.styles.js
-
 export const container = {
   maxWidth: "600px",
-  margin: "0 auto", // יושב בול באמצע כמו בפיד
+  margin: "0 auto",
   padding: "0",
   backgroundColor: "#ffffff",
-  borderBottom: "1px solid #dbdbdb", // רק קו תחתון, בלי מסגרת מלאה או צל
+  borderBottom: "1px solid #dbdbdb",
   fontFamily: "inherit",
   display: "flex",
   flexDirection: "column",
@@ -13,7 +11,7 @@ export const container = {
 
 export const image = {
   width: "100%",
-  maxHeight: "600px", // תמונה גדולה ומרשימה
+  maxHeight: "600px",
   objectFit: "cover",
   display: "block",
 };

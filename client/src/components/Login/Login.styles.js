@@ -1,11 +1,9 @@
-// Login.styles.js
-
 export const containerStyle = {
-  maxWidth: "350px", // באינסטגרם חלון ההתחברות צר וממוקד
+  maxWidth: "350px",
   margin: "80px auto",
   padding: "40px 30px",
   backgroundColor: "#ffffff",
-  border: "1px solid #dbdbdb", // מסגרת עדינה במקום צללית כבדה
+  border: "1px solid #dbdbdb",
   borderRadius: "8px",
   textAlign: "center",
   boxSizing: "border-box",
@@ -13,7 +11,7 @@ export const containerStyle = {
 
 export const titleStyle = {
   marginBottom: "30px",
-  color: "#262626", // השחור הקלאסי שלנו
+  color: "#262626",
   fontSize: "24px",
   fontWeight: "600",
 };
@@ -21,15 +19,15 @@ export const titleStyle = {
 export const formStyle = {
   display: "flex",
   flexDirection: "column",
-  gap: "10px", // מרווחים צפופים יותר לשדות ההקלדה
+  gap: "10px",
 };
 
 export const inputStyle = {
   width: "100%",
-  padding: "10px 12px", // פדינג עדין יותר
+  padding: "10px 12px",
   borderRadius: "6px",
   border: "1px solid #dbdbdb",
-  backgroundColor: "#fafafa", // רקע אפרפר מודרני לשדות
+  backgroundColor: "#fafafa",
   fontSize: "14px",
   color: "#262626",
   boxSizing: "border-box",
@@ -42,7 +40,7 @@ export const buttonStyle = (isSubmitting) => ({
   padding: "10px",
   borderRadius: "8px",
   border: "none",
-  backgroundColor: "#0095f6", // כחול אינסטגרם
+  backgroundColor: "#0095f6",
   color: "#ffffff",
   fontSize: "14px",
   fontWeight: "600",

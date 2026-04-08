@@ -28,9 +28,8 @@ const PostHeader = ({
         padding: "15px",
       }}
     >
-      {/* profile pic */}
       <Link
-        to={`/profile/${userId}`}
+        to={`/profile/${userId}`} //profile pic
         onClick={(e) => e.stopPropagation()}
         style={{ textDecoration: "none", display: "flex" }}
       >
@@ -60,7 +59,6 @@ const PostHeader = ({
         </div>
       </Link>
 
-      {/* שינינו ל-inherit כדי שיתאים לשפה שנבחרה */}
       <div style={{ flex: 1, textAlign: "inherit" }}>
         {/* username*/}
         <Link
@@ -77,7 +75,6 @@ const PostHeader = ({
         </div>
       </div>
 
-      {/* category badge */}
       {category && (
         <span
           style={{

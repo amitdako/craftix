@@ -2,9 +2,9 @@
 
 export const formContainer = (isHe) => ({
   padding: "16px 20px",
-  backgroundColor: "#ffffff", // לבן נקי לחלוטין (בלי ורוד)
+  backgroundColor: "#ffffff",
   borderTop: "1px solid #efefef",
-  direction: isHe ? "rtl" : "ltr", // יישור אוטומטי לימין או לשמאל
+  direction: isHe ? "rtl" : "ltr",
   display: "flex",
   flexDirection: "column",
   gap: "12px",
@@ -22,7 +22,7 @@ export const avatar = {
   borderRadius: "50%",
   overflow: "hidden",
   flexShrink: 0,
-  backgroundColor: "#efefef", // אפור עדין
+  backgroundColor: "#efefef",
   color: "#8e8e8e",
   display: "flex",
   alignItems: "center",
@@ -42,7 +42,7 @@ export const inputArea = {
 export const textarea = {
   width: "100%",
   padding: "12px 16px",
-  borderRadius: "20px", // מראה מעוגל ורך כמו באינסטגרם
+  borderRadius: "20px",
   border: "1px solid #dbdbdb",
   minHeight: "44px",
   outline: "none",
@@ -72,7 +72,7 @@ export const previewImage = {
 export const removeBtn = {
   position: "absolute",
   top: "6px",
-  insetInlineEnd: "6px", // עובד לשני הכיוונים
+  insetInlineEnd: "6px",
   zIndex: 10,
   backgroundColor: "rgba(0, 0, 0, 0.6)",
   color: "white",
@@ -93,7 +93,7 @@ export const footer = {
   justifyContent: "space-between",
   alignItems: "center",
   marginTop: "4px",
-  paddingInlineStart: "48px", // מזיח את הכפתורים שיהיו באותו קו עם הטקסט
+  paddingInlineStart: "48px",
 };
 
 export const addMediaLabel = {
@@ -101,7 +101,7 @@ export const addMediaLabel = {
   display: "flex",
   alignItems: "center",
   gap: "6px",
-  color: "#0095f6", // כחול אינסטגרם
+  color: "#0095f6",
   fontWeight: "600",
   fontSize: "14px",
 };
@@ -122,7 +122,7 @@ export const cancelBtn = {
 };
 
 export const shareBtn = (hasText) => ({
-  backgroundColor: "#0095f6", // כחול נקי
+  backgroundColor: "#0095f6",
   color: "white",
   border: "none",
   padding: "6px 16px",

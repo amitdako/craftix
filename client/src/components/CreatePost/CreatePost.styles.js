@@ -1,12 +1,10 @@
-// CreatePost.styles.js
-
 export const containerStyle = {
   maxWidth: "600px",
   margin: "40px auto",
   padding: "30px 40px",
   backgroundColor: "#ffffff",
   borderRadius: "12px",
-  border: "1px solid #dbdbdb", // מסגרת עדינה במקום צל כבד
+  border: "1px solid #dbdbdb",
   boxSizing: "border-box",
 };
 
@@ -22,12 +20,11 @@ export const typeSelectorStyle = {
   display: "flex",
   gap: "4px",
   marginBottom: "25px",
-  backgroundColor: "#efefef", // רקע של ה-Toggle
+  backgroundColor: "#efefef",
   padding: "4px",
   borderRadius: "10px",
 };
 
-// עיצוב כפתור כמעין טאב פעיל/לא פעיל
 export const typeButtonStyle = (isActive) => ({
   flex: 1,
   padding: "10px",
@@ -64,7 +61,6 @@ export const inputStyle = {
   transition: "border-color 0.2s",
 };
 
-// עיצוב מותאם לשדה העלאת קבצים
 export const fileUploadLabelStyle = {
   display: "flex",
   flexDirection: "column",
@@ -84,7 +80,7 @@ export const submitButtonStyle = (isSubmitting) => ({
   padding: "12px",
   borderRadius: "8px",
   border: "none",
-  backgroundColor: "#0095f6", // כחול אינסטגרם
+  backgroundColor: "#0095f6",
   color: "#ffffff",
   fontSize: "14px",
   fontWeight: "600",

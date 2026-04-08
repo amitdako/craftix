@@ -2,7 +2,7 @@ import axios from "axios";
 
 /**
  * Base URL configuration:
- * In production (Vercel), it uses the environment variable VITE_API_URL.
+ * In production (AWS), it uses the environment variable VITE_API_URL.
  * In development, it falls back to localhost:5000.
  */
 const api = axios.create({

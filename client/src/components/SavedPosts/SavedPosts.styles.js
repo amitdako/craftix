@@ -1,8 +1,6 @@
-// SavedPosts.styles.js
-
 export const containerStyle = {
   padding: "20px 0",
-  maxWidth: "600px", // הותאם בדיוק לרוחב של הפיד והפרופיל למראה אחיד
+  maxWidth: "600px",
   margin: "0 auto",
   boxSizing: "border-box",
 };
@@ -10,20 +8,20 @@ export const containerStyle = {
 export const titleStyle = {
   textAlign: "center",
   marginBottom: "30px",
-  color: "#262626", // שחור אינסטגרם נקי
+  color: "#262626",
   fontSize: "20px",
   fontWeight: "600",
 };
 
 export const gridStyle = {
   display: "flex",
-  flexDirection: "column", // מציג אותם בטור (כמו בפיד) במקום כגריד מפוזר
+  flexDirection: "column",
 };
 
 export const messageStyle = {
   textAlign: "center",
   padding: "60px 20px",
-  color: "#8e8e8e", // אפור עדין לטקסט משני
+  color: "#8e8e8e",
   fontSize: "14px",
   lineHeight: "1.5",
 };

@@ -9,7 +9,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
 
   const t = translations[currentLang] || translations.en;
   const isHe = currentLang === "he";
-
+  //searching the input
   const handleInputChange = (e) => {
     const value = e.target.value;
     setNavSearch(value);
@@ -24,12 +24,10 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
 
   return (
     <nav style={{ ...S.navContainerStyle, direction: isHe ? "rtl" : "ltr" }}>
-      {/* Left: Logo & User Status */}
       <div style={S.leftSectionStyle}>
         <Link to="/feed" style={{ display: "flex", alignItems: "center" }}>
           <img src={logo} alt="Craftix Logo" style={S.logoStyle} />
         </Link>
-
         {user && (
           <div style={S.userSectionStyle}>
             <div style={S.avatarContainerStyle}>
@@ -55,7 +53,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
         )}
       </div>
 
-      {/* Center: Global Search */}
+      {/* Center:Search */}
       {user && (
         <form onSubmit={handleFormSubmit} style={S.searchFormStyle}>
           <input
@@ -68,9 +66,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
         </form>
       )}
 
-      {/* Right: Navigation */}
       <div style={S.rightLinksWrapper}>
-        {/* כפתור החלפת שפה נקי */}
         <button
           onClick={toggleLanguage}
           style={{
@@ -82,7 +78,7 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
             fontWeight: "600",
             fontSize: "12px",
             color: "#262626",
-            marginInlineEnd: "10px", // תומך RTL אוטומטית!
+            marginInlineEnd: "10px",
           }}
         >
           {currentLang === "en" ? "עברית" : "English"}
@@ -92,6 +88,9 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
           <>
             <Link to="/feed" style={S.linkStyle}>
               {t.feed}
+            </Link>
+            <Link to="/makes" style={S.linkStyle}>
+              {t.Flowes || "Flowes"}
             </Link>
             <Link to="/saved-posts" style={S.linkStyle}>
               {t.saved}
@@ -110,7 +109,6 @@ const Navbar = ({ user, handleLogout, logo, toggleLanguage, currentLang }) => {
             </Link>
             <Link to="/register" style={S.newProjectBtnStyle}>
               {" "}
-              {/* הרשמה מודגשת כמו כפתור */}
               {t.register}
             </Link>
           </>

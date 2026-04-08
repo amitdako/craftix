@@ -1,16 +1,14 @@
-// Navbar.styles.js
-
 export const navContainerStyle = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  borderBottom: "1px solid #dbdbdb", // קו נקי ודק במקום הצללית
+  borderBottom: "1px solid #dbdbdb",
   padding: "10px 20px",
   backgroundColor: "#ffffff",
   position: "sticky",
   top: 0,
   zIndex: 1000,
-  height: "60px", // מקבע גובה אחיד כמו בניווט עליון קלאסי
+  height: "60px",
   boxSizing: "border-box",
 };
 
@@ -24,7 +22,7 @@ export const userSectionStyle = {
   display: "flex",
   alignItems: "center",
   gap: "12px",
-  borderInlineStart: "1px solid #efefef", // קו הפרדה שמתהפך לפי השפה
+  borderInlineStart: "1px solid #efefef",
   paddingInlineStart: "20px",
 };
 
@@ -63,7 +61,7 @@ export const logoutButtonStyle = {
   padding: "0",
   marginTop: "2px",
   backgroundColor: "transparent",
-  color: "#ed4956", // אדום נקי של אינסטגרם
+  color: "#ed4956",
   border: "none",
   cursor: "pointer",
   fontSize: "12px",
@@ -79,7 +77,7 @@ export const searchFormStyle = {
 export const searchInputStyle = {
   width: "100%",
   padding: "8px 16px",
-  borderRadius: "8px", // מלבן מעוגל קלות, כמו באינסטגרם 웹
+  borderRadius: "8px",
   border: "none",
   backgroundColor: "#efefef",
   outline: "none",
@@ -103,16 +101,16 @@ export const linkStyle = {
 };
 
 export const logoStyle = {
-  height: "35px", // שמרתי על פרופורציה אלגנטית
+  height: "35px",
   width: "auto",
 };
 
 export const newProjectBtnStyle = {
   textDecoration: "none",
-  backgroundColor: "#0095f6", // כחול מרכזי
+  backgroundColor: "#0095f6",
   color: "#ffffff",
   padding: "6px 16px",
-  borderRadius: "8px", // שטוח ונקי
+  borderRadius: "8px",
   fontWeight: "600",
   fontSize: "14px",
   transition: "opacity 0.2s",

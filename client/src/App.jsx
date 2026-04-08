@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import Register from "./components/Register/Register";
 import Login from "./components/Login/Login";
+import ShortsFeed from "./components/Shorts/ShortsFeed";
 import Feed from "./components/Feed/Feed";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import CreatePost from "./components/CreatePost/CreatePost";
@@ -85,11 +86,16 @@ function AppContent() {
           element={<Login currentLang={language} setUser={setUser} />}
         />
         <Route path="/register" element={<Register currentLang={language} />} />
-
+        <Route
+          path="/makes"
+          element={<ShortsFeed currentLang={language} currentUser={user} />}
+        />
         <Route
           path="/saved-posts"
           element={
             <ProtectedRoute>
+              {" "}
+              {/*if no one is loged, go to login*/}
               <SavedPosts currentUser={user} currentLang={language} />
             </ProtectedRoute>
           }
@@ -162,7 +168,6 @@ function AppContent() {
   );
 }
 
-// Styles - נשמרו בדיוק כפי שהיו
 const avatarStyle = {
   width: "35px",
   height: "35px",

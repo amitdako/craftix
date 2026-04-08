@@ -49,10 +49,10 @@ mongoose
 // Routes
 const postRoutes = require("./routes/posts");
 const userRoutes = require("./routes/users");
-
+const makeroutes = require("./routes/make");
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
-
+app.use("/api/makes", makeroutes);
 app.get("/", (req, res) => {
   res.send("Craftix API is running smoothly!");
 });

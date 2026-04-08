@@ -1,6 +1,6 @@
 export const cardStyle = {
   backgroundColor: "#fff",
-  borderBottom: "1px solid #efefef", // קו הפרדה נקי כמו בפיד
+  borderBottom: "1px solid #efefef",
   paddingBottom: "15px",
   marginBottom: "15px",
   display: "flex",
@@ -63,9 +63,9 @@ export const dateStyle = {
 export const categoryBadgeStyle = {
   fontSize: "12px",
   color: "#262626",
-  backgroundColor: "#efefef", // רקע עדין
+  backgroundColor: "#efefef",
   padding: "4px 8px",
-  borderRadius: "4px", // פינות קטנות, לא עגול לגמרי
+  borderRadius: "4px",
   fontWeight: "600",
   letterSpacing: "0.3px",
 };
@@ -148,7 +148,7 @@ export const badgeContainerStyle = {
 export const badgeStyle = {
   backgroundColor: "#fafafa",
   color: "#262626",
-  border: "1px solid #dbdbdb", // מסגרת עדינה ונקייה
+  border: "1px solid #dbdbdb",
   padding: "4px 10px",
   borderRadius: "6px",
   fontSize: "13px",

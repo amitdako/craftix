@@ -3,13 +3,13 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 import CommentSection from "../CommentSection/CommentSection";
 import * as S from "./PostDetails.styles";
-import PostHeader from "../PostCard/PostHeader"; // משתמשים ב-Header היפה של הפיד
+import PostHeader from "../PostCard/PostHeader";
 import SharedBox from "./SharedBox";
 import ImplementationForm from "../ImplementationForm/ImplementationForm";
 import Swal from "sweetalert2";
 import { translations } from "../../translations";
 
-// אייקונים
+//icons
 const HeartOutline = () => (
   <svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24">
     <path
@@ -277,83 +277,14 @@ const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
           </div>
         )}
 
-        {/* פעולות ולייקים מתחת לתמונה */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "10px 14px",
-          }}
-        >
-          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-            <button onClick={handleLike} style={S.actionBtnStyle}>
-              {likes.includes(currentUserId) ? (
-                <HeartFilled />
-              ) : (
-                <HeartOutline />
-              )}
-            </button>
-            <button
-              onClick={() => setShowComments(!showComments)}
-              style={S.actionBtnStyle}
-            >
-              <CommentIcon />
-              {allComments.length > 0 && (
-                <span
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginInlineStart: "6px",
-                  }}
-                >
-                  {allComments.length}
-                </span>
-              )}
-            </button>
-
-            {post.postType !== "implementation" && (
-              <button
-                onClick={() => setIsFormOpen(!isFormOpen)}
-                style={S.madeThisButtonStyle(isFormOpen)}
-              >
-                {isFormOpen ? t.cancel : t.iMadeThis}
-              </button>
-            )}
-          </div>
-
-          <button
-            onClick={handleSave}
-            style={S.actionBtnStyle}
-            title={t.saveTitle}
-          >
-            {currentUser?.savedPosts?.some((s) => (s._id || s) === post._id) ? (
-              <SaveFilled />
-            ) : (
-              <SaveOutline />
-            )}
-          </button>
-        </div>
-
-        {likes.length > 0 && (
-          <div
-            style={{
-              padding: "0 14px",
-              fontWeight: "600",
-              fontSize: "14px",
-              color: "#262626",
-            }}
-          >
-            {likes.length} {t.likes}
-          </div>
-        )}
-
-        <div style={{ padding: "8px 14px 16px 14px" }}>
+        {/* 1. הטקסט והתוכן הועברו לכאן (מיד אחרי התמונה) */}
+        <div style={{ padding: "14px 14px 10px 14px" }}>
           {post.title && (
             <h2 style={S.title} dir="auto">
               {post.title}
             </h2>
           )}
-          <p style={S.description} dir="auto">
+          <p style={{ ...S.description, whiteSpace: "pre-wrap" }} dir="auto">
             {post.content}
           </p>
 
@@ -382,6 +313,76 @@ const PostDetails = ({ currentLang, currentUser, onUserUpdate }) => {
               </div>
             </div>
           )}
+        </div>
+
+        {likes.length > 0 && (
+          <div
+            style={{
+              padding: "0 14px 16px 14px",
+              fontWeight: "600",
+              fontSize: "14px",
+              color: "#262626",
+            }}
+          >
+            {likes.length} {t.likes}
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0px 14px 10px 14px",
+          }}
+        >
+          <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+            <button onClick={handleLike} style={S.actionBtnStyle}>
+              {likes.includes(currentUserId) ? (
+                <HeartFilled />
+              ) : (
+                <HeartOutline />
+              )}
+            </button>
+            <button
+              onClick={() => setShowComments(!showComments)}
+              style={S.actionBtnStyle}
+            >
+              <CommentIcon />
+              {allComments.length > 0 && (
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginInlineStart: "6px",
+                  }}
+                >
+                  {allComments.length}
+                </span>
+              )}
+            </button>
+
+            {/* הכפתור של I Made This יופיע רק אם זה פרויקט, כמו שביקשת קודם */}
+            {post.postType !== "implementation" &&
+              post.postType !== "general" && (
+                <button
+                  onClick={() => setIsFormOpen(!isFormOpen)}
+                  style={S.madeThisButtonStyle(isFormOpen)}
+                >
+                  {isFormOpen ? t.cancel : t.iMadeThis}
+                </button>
+              )}
+          </div>
+
+          <button
+            onClick={handleSave}
+            style={S.actionBtnStyle}
+            title={t.saveTitle}
+          >
+            {currentUser?.savedPosts?.some((s) => (s._id || s) === post._id) ? (
+              <SaveFilled />
+            ) : (
+              <SaveOutline />
+            )}
+          </button>
         </div>
 
         <SharedBox

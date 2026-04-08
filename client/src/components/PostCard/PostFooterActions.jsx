@@ -137,8 +137,7 @@ const PostFooterActions = ({
           {isSaved ? <SaveFilled /> : <SaveOutline />}
         </button>
 
-        {/* כפתורי עריכה ומחיקה יופיעו רק לבעל הפוסט */}
-        {isOwner && (
+        {isOwner && ( //delete and edit buttons will be show just for the post's owner.
           <>
             <button
               onClick={onEdit}

@@ -75,7 +75,7 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       console.error("Error liking post:", err);
     }
   };
-
+  // submit i made it
   const handleSubmitMadeThis = async (e) => {
     if (e) e.stopPropagation();
     if (!madeThisText.trim()) return;
@@ -122,7 +122,7 @@ const PostCard = ({ currentLang, post, currentUser, onSave, onDelete }) => {
       console.error("Error liking comment:", err);
     }
   };
-
+  //delete comment
   const handleDeleteComment = async (commentId) => {
     const result = await Swal.fire({
       title: t.commentDeleteConfirmTitle,
