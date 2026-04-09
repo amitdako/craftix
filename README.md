@@ -15,7 +15,6 @@ The primary goal of this project was to build a high-performance discovery tool 
 - **Backend:** Node.js, Express.js.
 - **Database:** MongoDB.
 - **Cloud & Storage:** AWS, Multer (for multipart/form-data handling).
--
 
 ## Prerequisites
 
@@ -24,7 +23,7 @@ Before you begin, ensure you have the following installed on your local machine:
 - [Node.js](https://nodejs.org/) (v16 or higher)
 - [MongoDB Community Edition](https://www.mongodb.com/try/download/community) - Make sure the MongoDB service is running locally on the default port (`27017`).
 
-## 🏗️ Architecture & Workflow
+## Architecture & Workflow
 
 The architecture of Craftix is designed for scalability and a clean separation of concerns, ensuring a robust Fullstack environment:
 
