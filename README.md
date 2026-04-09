@@ -80,7 +80,8 @@ npm install
 ```
 
 2. Create and configure the environment variables:
-   First, create a .env file:
+
+First, create a .env file:
 
 ```
 touch .env
@@ -105,6 +106,8 @@ npm run dev
 
 ## Frontend Setup:
 
+1. Navigate to the client directory and install dependencies:
+
 ```
 cd client
 ```
@@ -112,6 +115,8 @@ cd client
 ```
 npm install
 ```
+
+2. start the development client:
 
 ```
 npm run dev
