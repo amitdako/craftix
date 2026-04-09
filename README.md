@@ -69,6 +69,8 @@ cd craftix
 
 ## Backend Setup:
 
+1. Navigate to the server directory and install dependencies:
+
 ```
 cd server
 ```
@@ -77,10 +79,10 @@ cd server
 npm install
 ```
 
-Create a .env file in the server root directory:
+2. Create and configure the environment variables:
+   First, create a .env file:
 
 ```
-bash
 touch .env
 ```
 
@@ -93,34 +95,13 @@ JWT_SECRET=put_your_own_secret_here
 
 ```
 
-=======
-
-```
-cd server
-```
-
-```
-npm install
-```
-
-Create a .env file in the server root directory.
-
-```
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/craftix
-```
-
-and start the server:
+3. Start the development server:
 
 ```
 npm run dev
 ```
 
 #### Optional: Add AWS keys to enable image uploading
-
-```
-npm run dev
-```
 
 ## Frontend Setup:
 
