@@ -154,7 +154,6 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           <h2 style={S.profileNameStyle}>
             {profileUser?.displayName || profileUser?.fullName}
           </h2>
-          <p style={S.profileEmailStyle}>{profileUser?.email}</p>
 
           {isMyProfile && (
             <div style={S.actionButtonsWrapper}>
@@ -208,7 +207,7 @@ const Profile = ({ currentLang, currentUser, onUpdateUser }) => {
           </span>
         )}
       </h3>
-      /
+
       {posts.length === 0 ? ( //posts list
         <div style={S.emptyStateStyle}>
           <p>
