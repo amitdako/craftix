@@ -15,6 +15,14 @@ The primary goal of this project was to build a high-performance discovery tool 
 - **Backend:** Node.js, Express.js.
 - **Database:** MongoDB.
 - **Cloud & Storage:** AWS, Multer (for multipart/form-data handling).
+-
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed on your local machine:
+
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [MongoDB Community Edition](https://www.mongodb.com/try/download/community) - Make sure the MongoDB service is running locally on the default port (`27017`).
 
 ## 🏗️ Architecture & Workflow
 
@@ -51,26 +59,83 @@ MongoDB (A local instance running on your machine is sufficient)
 
 ## Installation Steps:
 
-1. git clone https://github.com/amitdako/craftix.git
-2. cd craftix
+```
+git clone https://github.com/amitdako/craftix.git
+```
+
+```
+cd craftix
+```
 
 ## Backend Setup:
 
-1. cd server
-2. npm install
-3. Create a .env file in the server root directory.
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/craftix
+```
+cd server
+```
 
-# Optional: Add AWS keys to enable image uploading
+```
+npm install
+```
 
-4. npm run dev
+Create a .env file in the server root directory:
+
+```
+bash
+touch .env
+```
+
+Open the new .env file and add the following variables. (Note: Replace the dummy values with your actual MongoDB connection string and a secure secret key):
+
+```
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/craftix
+JWT_SECRET=put_your_own_secret_here
+
+```
+
+=======
+
+```
+cd server
+```
+
+```
+npm install
+```
+
+Create a .env file in the server root directory.
+
+```
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/craftix
+```
+
+and start the server:
+
+```
+npm run dev
+```
+
+#### Optional: Add AWS keys to enable image uploading
+
+```
+npm run dev
+```
 
 ## Frontend Setup:
 
-1. cd client
-2. npm install
-3. npm run dev
-4. Open your browser and navigate to http://localhost:3000.
+```
+cd client
+```
+
+```
+npm install
+```
+
+```
+npm run dev
+```
+
+Open your browser and navigate to (http://localhost:5173/)
 
 - **Preview:** ![demo](show.gif) — _Watch this quick preview to see Craftix in action!_
