@@ -200,7 +200,7 @@ const Feed = ({ currentLang, currentUser, onUserUpdate }) => {
           </p>
         ) : posts.length > 0 ? (
           <div style={S.postsListStyle}>
-            {posts.map((post) => (
+            {posts?.map((post) => (
               <PostCard
                 currentLang={currentLang}
                 key={post._id}
